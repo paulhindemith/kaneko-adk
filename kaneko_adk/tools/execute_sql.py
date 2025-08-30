@@ -1,4 +1,6 @@
-# Tool to execute SQL
+"""
+Tool to execute SQL
+"""
 import json
 import tempfile
 from typing import Callable

@@ -1,4 +1,6 @@
-# This script downloads data and/or metadata from BigQuery tables and generates a JSONL file for local data agents.
+"""
+This script downloads data and/or metadata from BigQuery tables and generates a JSONL file for local data agents.
+"""
 import argparse
 import csv
 import io

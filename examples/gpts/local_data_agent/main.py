@@ -1,5 +1,6 @@
-# Fast API
-# pylint: disable=broad-exception-caught,global-statement
+"""
+Fast API server for querying a local DuckDB database
+"""
 from contextlib import asynccontextmanager
 import json
 import os

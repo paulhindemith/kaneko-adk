@@ -1,4 +1,6 @@
-# local にデータを配置したデータエージェント
+"""
+local にデータを配置したデータエージェント
+"""
 import json
 import os
 from pathlib import Path
