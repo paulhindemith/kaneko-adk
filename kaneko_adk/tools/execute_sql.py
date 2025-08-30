@@ -60,7 +60,7 @@ def create_sql_context(tables: list[Table]) -> str:
         d["sql"] = df.to_csv(index=False)
 
         # Convert preview to CSV
-        df = pd.DataFrame([row for row in table.preview.sample_data])
+        df = pd.DataFrame([row for row in table.preview.csv])
         d["preview"] = df.head(3).to_csv(index=False)
 
         context.append(d)
