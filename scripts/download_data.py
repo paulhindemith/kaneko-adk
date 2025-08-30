@@ -1,15 +1,17 @@
 # This script downloads data and/or metadata from BigQuery tables and generates a JSONL file for local data agents.
-import os
-import json
 import argparse
 import csv
 import io
-import shutil
-from typing import List, Dict
+import json
+import os
 from pathlib import Path
+import shutil
+from typing import Dict, List
+
 from google.cloud import bigquery
 import ibis
 from ibis.backends.duckdb import Backend
+
 from kaneko_adk.tools import execute_sql
 
 TABLES: List[str] = [

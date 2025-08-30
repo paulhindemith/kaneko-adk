@@ -2,9 +2,11 @@
 import json
 import tempfile
 from typing import Callable
-import pandas as pd
+
 from ibis.backends.duckdb import Backend as DuckdbBackend
-from pydantic import BaseModel, Field
+import pandas as pd
+from pydantic import BaseModel
+from pydantic import Field
 
 
 class Schema(BaseModel):

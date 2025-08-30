@@ -2,11 +2,14 @@ FROM python:3.12.11-slim-bullseye
 
 WORKDIR /app
 
-RUN pip install pipx && python -m pipx ensurepath 
+RUN pip install pipx && python -m pipx ensurepath
+
 RUN pipx install poetry
+
 ENV PATH="/root/.local/bin:${PATH}"
 
 COPY poetry.lock pyproject.toml README.md ./
+
 RUN poetry install --no-root --without dev
 
 COPY --from=kaneko-adk kaneko_adk kaneko_adk
