@@ -72,7 +72,7 @@ def create_sql_context(tables: list[Table]) -> str:
     return json.dumps(context, ensure_ascii=False)
 
 
-def build_tool(con: DuckdbBackend) -> Callable:
+def build_tool(con: DuckdbBackend, add_context: bool = False) -> Callable:
     "Build a tool to execute SQL"
 
     def execute_sql(query: str) -> str:
@@ -98,11 +98,14 @@ def build_tool(con: DuckdbBackend) -> Callable:
                 tmpfile.write(res.encode())
                 file_path = tmpfile.name
 
-            return {
+            res = {
                 "path": file_path,
                 "mime_type": "text/csv",
                 "content": res,
             }
+            if add_context:
+                return {"_context": res}
+            return res
         except Exception as e:
             return {"error": str(e)}
 

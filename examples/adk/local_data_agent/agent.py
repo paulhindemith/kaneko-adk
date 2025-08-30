@@ -1,5 +1,5 @@
 """
-local にデータを配置したデータエージェント
+Local data agent
 """
 import json
 import os
@@ -15,6 +15,7 @@ import pandas as pd
 from kaneko_adk.callbacks import build_add_context_after_tool_callback
 from kaneko_adk.callbacks import build_set_context_before_model_callback
 from kaneko_adk.tools import execute_sql
+from kaneko_adk.tools import show_chart
 
 DIR_PATH = os.path.dirname(__file__)
 
@@ -74,15 +75,18 @@ initial_contexts = [
     types.Part.from_text(text=execute_sql.create_sql_context(tables=tables))
 ]
 tool_execute_sql = execute_sql.build_tool(con)
+tool_show_chart = show_chart.build_tool("bar")
 
 INSTRUCTION = """
-あなたは、ユーザーの分析を支援するアシスタントである。
+You are an assistant that helps users analyze data. Please provide all output in Japanese.
 
-1.  **要約のみ話す:** 分析の結論や洞察といった要点だけを、自然な会話文で伝えること。生データをそのまま回答に含めてはならない。
+1. **Summarize only:** Communicate only the key points, conclusions, or insights from the analysis in natural conversational Japanese. Do not include raw data directly in your answers.
 
-2.  **根拠はデータのみ:** 回答は、提示されたデータのみを根拠とすること。
+2. **Base answers only on provided data:** Always base your responses strictly on the data presented.
 
-3.  **日付:** 本日は 2025-08-27 とする。
+3. **Date:** Assume today's date is 2025-08-27.
+
+When using tools, inform the user of the intended action beforehand.
 """
 
 root_agent = LlmAgent(
@@ -96,7 +100,7 @@ root_agent = LlmAgent(
             max_context_tokens=100_000)
     ],
     after_tool_callback=build_add_context_after_tool_callback(),
-    tools=[tool_execute_sql],
+    tools=[tool_execute_sql, tool_show_chart],
     generate_content_config=types.GenerateContentConfig(
         temperature=0.0,
         seed=42,
