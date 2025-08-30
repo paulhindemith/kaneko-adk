@@ -1,0 +1,19 @@
+[project]
+name = "kaneko-adk"
+version = "0.1.0"
+description = "Google ADK を利用する際のライブラリをまとめました。"
+authors = [
+    {name = "tai.kaneko",email = "tai.kaneko@datacurrent.co.jp"}
+]
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "google-adk (>=1.13.0,<2.0.0)",
+    "ibis-framework[duckdb] (>=10.8.0,<11.0.0)",
+    "db-dtypes (>=1.4.3,<2.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
