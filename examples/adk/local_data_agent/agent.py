@@ -18,6 +18,7 @@ from kaneko_adk.tools import execute_sql
 from kaneko_adk.tools import show_chart
 
 DIR_PATH = os.path.dirname(__file__)
+MAX_ROWS = execute_sql.MAX_ROWS
 
 
 def connect() -> Tuple[Backend, list[execute_sql.Table]]:

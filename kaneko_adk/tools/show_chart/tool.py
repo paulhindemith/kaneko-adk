@@ -2,7 +2,7 @@
 Show a Vega-Lite Chart
 """
 import os
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Optional
 
 from google.adk.tools import FunctionTool
 from google.genai import types
