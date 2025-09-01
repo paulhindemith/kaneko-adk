@@ -3,7 +3,6 @@ Streamlit Demo for Local Data Agent
 """
 import asyncio
 import copy
-import json
 import random
 import time
 from typing import AsyncGenerator, AsyncIterable, Iterable, List
@@ -95,10 +94,12 @@ def dialog(parts: List[types.Part]):
                             response_part = p
                             break
                     if response_part is None:
-                        st.warning("No response part found.")
+                        st.warning("No response found.",
+                                   icon=":material/computer_cancel:")
                     elif "error" in response_part.function_response.response:
-                        st.error(
-                            response_part.function_response.response["error"])
+                        st.warning(
+                            "LLM made a mistake during content generation.",
+                            icon=":material/computer_cancel:")
                     else:
                         df = pd.read_csv(
                             response_part.function_response.response["path"])
@@ -109,19 +110,18 @@ def dialog(parts: List[types.Part]):
 
             elif part.function_call.name == "show_chart":
                 with st.expander(":blue-badge[show_chart]", expanded=True):
-                    st.json(json.dumps(part.function_call.args,
-                                       ensure_ascii=False),
-                            expanded=1)
                     response_part: types.Part = None
                     for p in parts:
                         if p.function_response and part.function_call.id == p.function_response.id:
                             response_part = p
                             break
                     if response_part is None:
-                        st.warning("No response part found.")
+                        st.warning("No response found.",
+                                   icon=":material/computer_cancel:")
                     elif "error" in response_part.function_response.response:
-                        st.error(
-                            response_part.function_response.response["error"])
+                        st.warning(
+                            "LLM made a mistake during content generation.",
+                            icon=":material/computer_cancel:")
                     else:
                         show_chart(part.function_call)
 
