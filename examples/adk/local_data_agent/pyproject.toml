@@ -8,11 +8,11 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
 dependencies = [
-    "geopandas (>=1.1.1,<2.0.0)",
-    "streamlit (>=1.49.1,<2.0.0)",
     "google-adk (>=1.13.0,<2.0.0)",
     "ibis-framework[duckdb] (>=10.8.0,<11.0.0)",
     "db-dtypes (>=1.4.3,<2.0.0)",
+    "jsonschema (>=4.25.1,<5.0.0)",
+    "streamlit (>=1.49.1,<2.0.0)",
     "sqids (>=0.5.2,<0.6.0)",
     "fsspec (>=2025.7.0,<2026.0.0)"
 ]
