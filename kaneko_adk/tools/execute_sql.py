@@ -10,6 +10,8 @@ import pandas as pd
 from pydantic import BaseModel
 from pydantic import Field
 
+MAX_ROWS = 100
+
 
 class Schema(BaseModel):
     """Table schema information"""
@@ -90,7 +92,7 @@ def build_tool(con: DuckdbBackend, add_context: bool = False) -> Callable:
             df = con.sql(query).execute()
 
             # Return only the first 100 rows as CSV
-            res = df.head(100).to_csv(index=False)
+            res = df.head(MAX_ROWS).to_csv(index=False)
 
             file_path = ""
             with tempfile.NamedTemporaryFile(delete=False,

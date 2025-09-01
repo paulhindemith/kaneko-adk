@@ -6,6 +6,8 @@ from typing import Any, Callable, Dict, Optional
 
 from google.adk.tools import FunctionTool
 from google.genai import types
+import jsonschema
+import pandas as pd
 from typing_extensions import override
 
 DIR_PATH = os.path.dirname(__file__)
@@ -39,20 +41,32 @@ def build_tool(schema_name: str) -> ShowChartTool:
 
     file_name = f"_auto_generated_{schema_name}_schema.json"
     with open(os.path.join(DIR_PATH, file_name), "r", encoding="utf-8") as f:
-        schema = types.Schema.model_validate_json(f.read())
+        json_schema = types.JSONSchema.model_validate_json(f.read())
+        schema = types.Schema.from_json_schema(json_schema=json_schema,
+                                               api_option="VERTEX_AI")
 
-    def show_chart(data: Dict[str, Any], description: str, encoding: Dict[str,
-                                                                          Any],
-                   mark: Dict[str, Any], title: str) -> Callable:
+    def show_chart(**kwargs) -> Callable:
         """
         Show a Vega-Lite chart.
         """
-        # 全体的に引数を出力
-        print(f"{data=}")
-        print(f"{description=}")
-        print(f"{encoding=}")
-        print(f"{mark=}")
-        print(f"{title=}")
-        return {"message": "OK"}
+        try:
+            jsonschema.validate(instance=kwargs,
+                                schema=json_schema.model_dump(mode="json"))
+
+            data = kwargs["data"]
+
+            if not data.get("format"):
+                raise ValueError("Missing data format")
+            format_info = data["format"]
+            if format_info.get("type") == "csv":
+                csv_url = data.get("url")
+                if not csv_url:
+                    raise ValueError("Missing CSV URL")
+                pd.read_csv(csv_url, nrows=5)
+            else:
+                raise ValueError("Invalid data format")
+            return {"message": "OK"}
+        except Exception as e:
+            return {"error": str(e)}
 
     return ShowChartTool(func=show_chart, schema=schema)
