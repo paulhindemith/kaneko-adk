@@ -1,32 +1,19 @@
-[project]
+[tool.poetry]
 name = "local-data-agent"
 version = "0.1.0"
 description = ""
-authors = [
-    {name = "tai.kaneko",email = "tai.kaneko@datacurrent.co.jp"}
-]
+authors = ["tai.kaneko <tai.kaneko@datacurrent.co.jp>"]
 readme = "README.md"
-requires-python = ">=3.12,<3.13"
-dependencies = [
-    "google-adk (>=1.13.0,<2.0.0)",
-    "ibis-framework[duckdb] (>=10.8.0,<11.0.0)",
-    "db-dtypes (>=1.4.3,<2.0.0)",
-    "uvicorn (>=0.35.0,<0.36.0)",
-    "geopandas (>=1.1.1,<2.0.0)"
-]
-
-[tool.poetry]
 package-mode = false
 
 [tool.poetry.dependencies]
-kaneko-adk = {path = "../../../", develop = true}
+python = ">=3.12,<3.13"
+uvicorn = ">=0.35.0,<0.36.0"
+geopandas = ">=1.1.1,<2.0.0"
+kaneko-adk = { path = "../../../", develop = true }
 
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.group.dev.dependencies]
-google-cloud-bigquery-storage = "^2.32.0"
-google-cloud-bigquery = "^3.36.0"
 

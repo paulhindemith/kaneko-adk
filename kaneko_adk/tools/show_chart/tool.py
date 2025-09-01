@@ -1,16 +1,25 @@
 """
 Show a Vega-Lite Chart
 """
+import inspect
+import logging
 import os
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Dict, Optional
 
 from google.adk.tools import FunctionTool
+from google.adk.tools import ToolContext
 from google.genai import types
-import jsonschema
 import pandas as pd
+from pydantic import ValidationError
 from typing_extensions import override
 
+from kaneko_adk.tools.show_chart.auto_generated_gemini_models import Model
+from kaneko_adk.tools.show_chart.auto_generated_gemini_models import Type
+
 DIR_PATH = os.path.dirname(__file__)
+
+logging.basicConfig(level=logging.INFO)
+default_logger = logging.getLogger(__name__)
 
 
 class ShowChartTool(FunctionTool):
@@ -29,43 +38,52 @@ class ShowChartTool(FunctionTool):
             parameters=self.schema,
         )
 
+    @override
+    async def run_async(self, *, args: dict[str, Any],
+                        tool_context: ToolContext) -> Any:
+        args_to_call = args.copy()
 
-def build_tool(schema_name: str) -> ShowChartTool:
+        if (inspect.iscoroutinefunction(self.func)
+                or hasattr(self.func, '__call__')
+                and inspect.iscoroutinefunction(self.func.__call__)):
+            return await self.func(args_to_call)
+        else:
+            return self.func(args_to_call)
+
+
+def build_tool(schema_name: str,
+               logger: logging.Logger = default_logger) -> ShowChartTool:
     """
     Build a tool for showing a Vega-Lite chart.
     Args:
         schema_name (str): The name of the schema to use for the chart.
+        logger (logging.Logger): The logger to use for logging.
+
     Returns:
         ShowChartTool : A function that takes a DuckDB backend connection and returns a Vega-Lite chart.
     """
 
-    file_name = f"_auto_generated_{schema_name}_schema.json"
+    file_name = f"auto_generated_{schema_name}_schema.json"
     with open(os.path.join(DIR_PATH, file_name), "r", encoding="utf-8") as f:
         json_schema = types.JSONSchema.model_validate_json(f.read())
         schema = types.Schema.from_json_schema(json_schema=json_schema,
                                                api_option="VERTEX_AI")
 
-    def show_chart(**kwargs) -> Callable:
+    def show_chart(args) -> Dict:
         """
         Show a Vega-Lite chart.
         """
         try:
-            jsonschema.validate(instance=kwargs,
-                                schema=json_schema.model_dump(mode="json"))
 
-            data = kwargs["data"]
+            model = Model.model_validate(args)
 
-            if not data.get("format"):
-                raise ValueError("Missing data format")
-            format_info = data["format"]
-            if format_info.get("type") == "csv":
-                csv_url = data.get("url")
-                if not csv_url:
-                    raise ValueError("Missing CSV URL")
-                pd.read_csv(csv_url, nrows=5)
+            if model.data.format.type == Type.csv:
+                pd.read_csv(model.data.url, nrows=5)
             else:
                 raise ValueError("Invalid data format")
             return {"message": "OK"}
+        except ValidationError as e:
+            return {"error": e.json()}
         except Exception as e:
             return {"error": str(e)}
 

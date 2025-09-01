@@ -76,7 +76,7 @@ initial_contexts = [
     types.Part.from_text(text=execute_sql.create_sql_context(tables=tables))
 ]
 tool_execute_sql = execute_sql.build_tool(con)
-tool_show_chart = show_chart.build_tool("bar")
+tool_show_chart = show_chart.build_tool("gemini")
 
 INSTRUCTION = """
 You are an assistant that helps users analyze data. Please provide all output in Japanese.
