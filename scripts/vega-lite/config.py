@@ -4,10 +4,12 @@ You can use this site to easily explore JSON paths: https://jsonpathfinder.com/
 """
 defs = {
     "name":
-    "bar_schema",
+    "gemini",
     "includes": [
         "$.['$ref']",
         "$.['$schema']",
+        "$.definitions.Aggregate",
+        "$.definitions.NonArgAggregateOp",
         "$.definitions.AnyMark",
         "$.definitions.ColorDef",
         "$.definitions.Data",
@@ -23,7 +25,9 @@ defs = {
         "$.definitions.['MarkPropDef<(Gradient|string|null)>']",
         "$.definitions.Parse",
         "$.definitions.ParseValue",
+        "$.definitions.PolarDef",
         "$.definitions.PositionFieldDef",
+        "$.definitions.PositionFieldDefBase",
         "$.definitions.Scale",
         "$.definitions.StandardType",
         "$.definitions.Text",
@@ -32,6 +36,8 @@ defs = {
         "$.definitions.UrlData",
     ],
     "excludes": [
+        "$.definitions.Aggregate.anyOf[1]",
+        "$.definitions.Aggregate.anyOf[2]",
         "$.definitions.AnyMark.anyOf[0]",
         "$.definitions.AnyMark.anyOf[1]",
         "$.definitions.AnyMark.anyOf[3]",
@@ -68,7 +74,6 @@ defs = {
         "$.definitions.FacetedEncoding.properties.strokeOpacity",
         "$.definitions.FacetedEncoding.properties.strokeWidth",
         "$.definitions.FacetedEncoding.properties.text",
-        "$.definitions.FacetedEncoding.properties.theta",
         "$.definitions.FacetedEncoding.properties.theta2",
         "$.definitions.FacetedEncoding.properties.time",
         "$.definitions.FacetedEncoding.properties.tooltip",
@@ -94,18 +99,29 @@ defs = {
         "$.definitions.['FieldOrDatumDefWithCondition<MarkPropFieldDef,(Gradient|string|null)>'].properties.type",
         "$.definitions.['MarkPropDef<(Gradient|string|null)>'].anyOf[1]",
         "$.definitions.['MarkPropDef<(Gradient|string|null)>'].anyOf[2]",
+        "$.definitions.PolarDef.anyOf[1]",
+        "$.definitions.PolarDef.anyOf[2]",
         "$.definitions.PositionDef.anyOf[1]",
         "$.definitions.PositionDef.anyOf[2]",
-        "$.definitions.PositionFieldDef.properties.aggregate",
         "$.definitions.PositionFieldDef.properties.axis",
         "$.definitions.PositionFieldDef.properties.bandPosition",
-        "$.definitions.PositionFieldDef.properties.bin",
+        "$.definitions.PositionFieldDef.properties.bin.anyOf[1]",
+        "$.definitions.PositionFieldDef.properties.bin.anyOf[2]",
+        "$.definitions.PositionFieldDef.properties.bin.anyOf[3]",
         "$.definitions.PositionFieldDef.properties.impute",
         "$.definitions.PositionFieldDef.properties.scale",
         "$.definitions.PositionFieldDef.properties.sort",
         "$.definitions.PositionFieldDef.properties.stack",
         "$.definitions.PositionFieldDef.properties.timeUnit",
         "$.definitions.PositionFieldDef.properties.title.anyOf[1]",
+        "$.definitions.PositionFieldDefBase.properties.aggregate",
+        "$.definitions.PositionFieldDefBase.properties.bandPosition",
+        "$.definitions.PositionFieldDefBase.properties.bin",
+        "$.definitions.PositionFieldDefBase.properties.scale",
+        "$.definitions.PositionFieldDefBase.properties.sort",
+        "$.definitions.PositionFieldDefBase.properties.stack",
+        "$.definitions.PositionFieldDefBase.properties.timeUnit",
+        "$.definitions.PositionFieldDefBase.properties.title",
         "$.definitions.Scale.properties",
         "$.definitions.Text.anyOf[1]",
         "$.definitions.Text.anyOf[2]",
@@ -124,6 +140,7 @@ defs = {
         "$.definitions.TopLevelUnitSpec.properties.config",
         "$.definitions.TopLevelUnitSpec.properties.data.anyOf[1]",
         "$.definitions.TopLevelUnitSpec.properties.datasets",
+        "$.definitions.TopLevelUnitSpec.properties.description",
         "$.definitions.TopLevelUnitSpec.properties.height",
         "$.definitions.TopLevelUnitSpec.properties.name",
         "$.definitions.TopLevelUnitSpec.properties.padding",
@@ -141,18 +158,19 @@ defs = {
     ],
     "unresolving_definitions": [],
     "replace": {
-        "$.definitions.UrlData.required": ["url", "format"],
-        "$.definitions.UrlData.properties.url.description":
-        "CSV file path",
         "$.definitions.CsvDataFormat.required": ["type"],
         "$.definitions.CsvDataFormat.properties.type.description":
         "Type of input data. Only 'csv' is supported.",
         "$.definitions.CsvDataFormat.properties.type.enum": ["csv"],
-        "$.definitions.PositionFieldDef.required": ["field", "title", "type"],
         "$.definitions.Encoding.required": ["color", "x", "y"],
         "$.definitions.['FieldOrDatumDefWithCondition<MarkPropFieldDef,(Gradient|string|null)>'].required":
         ["field", "scale", "title"],
-        "$.definitions.Mark.enum": ["bar"],
+        "$.definitions.Mark.enum": ["bar", "arc", "circle", "line"],
+        "$.definitions.NonArgAggregateOp.enum": ["count"],
+        "$.definitions.PositionFieldDef.required": ["field", "title", "type"],
+        "$.definitions.UrlData.required": ["url", "format"],
+        "$.definitions.UrlData.properties.url.description":
+        "CSV file path",
         "$.definitions.Scale.properties": {
             "scheme": {
                 "description":
@@ -163,7 +181,7 @@ defs = {
         },
         "$.definitions.Scale.required": ["scheme"],
         "$.definitions.TopLevelUnitSpec.required":
-        ["data", "description", "encoding", "mark", "title"],
+        ["data", "encoding", "mark", "title"],
     },
     "remove_fields": ["additionalProperties", "$schema"]
 }
