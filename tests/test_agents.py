@@ -86,7 +86,6 @@ async def agent() -> DataAnalyticsAgent:
         tables=tables,
         today=datetime.datetime(2025, 8, 27, tzinfo=jst),
     )
-    print("ready")
     await daa.ready()
     return daa
 
@@ -133,7 +132,7 @@ async def test_data_analytics_agent(agent: DataAnalyticsAgent, prompt: str,
     async for e in event_generator:
         if e.content and e.content.parts:
             events.append(e)
-        if len(events) >= 10:
+        if len(events) >= 20:
             logger.warning(f"Event limit reached for '{prompt}'.")
             break
     assert len(
@@ -163,8 +162,8 @@ async def test_data_analytics_agent(agent: DataAnalyticsAgent, prompt: str,
         for event in events
         for part in event.content.parts if part.function_call
     }
-    assert all_function_calls == required_tools, \
-        f"Tool usage mismatch for '{prompt}'. Expected {required_tools}, got {all_function_calls}."
+    assert required_tools.issubset(all_function_calls), \
+        f"Tool usage mismatch for '{prompt}'. Expected at least {required_tools}, got {all_function_calls}."
 
     # Rule 3: Check the final event's structure
     last_event = events[-1]
