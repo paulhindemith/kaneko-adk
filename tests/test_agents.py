@@ -5,6 +5,7 @@ Test agents
 
 import datetime
 import json
+import logging
 import os
 from pathlib import Path
 from typing import Dict, List, Set, Tuple
@@ -20,6 +21,9 @@ import pytest
 from kaneko_adk.agents import DataAnalyticsAgent
 
 TEST_DIR_PATH = os.path.dirname(__file__)
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def connect_for_test() -> Tuple[Backend, List[DataAnalyticsAgent.Table]]:
@@ -130,6 +134,7 @@ async def test_data_analytics_agent(agent: DataAnalyticsAgent, prompt: str,
         if e.content and e.content.parts:
             events.append(e)
         if len(events) >= 10:
+            logger.warning(f"Event limit reached for '{prompt}'.")
             break
     assert len(
         events

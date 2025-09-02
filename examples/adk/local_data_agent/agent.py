@@ -7,8 +7,6 @@ import os
 from pathlib import Path
 from typing import Dict, Tuple
 
-from google.adk.agents import LlmAgent
-from google.genai import types
 import ibis
 from ibis.backends.duckdb import Backend
 import pandas as pd
@@ -77,5 +75,7 @@ root_agent = DataAnalyticsAgent(name="local_data_agent",
                                 instruction="日本語で回答すること。",
                                 con=con,
                                 tables=tables,
-                                date=datetime.datetime(2025, 8, 27,
-                                                       tzinfo=JST))
+                                today=datetime.datetime(2025,
+                                                        8,
+                                                        27,
+                                                        tzinfo=JST))
