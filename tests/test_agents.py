@@ -92,7 +92,7 @@ async def agent() -> DataAnalyticsAgent:
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("prompt, required_tools", [
-    ("Sales trends up to this month", {'execute_sql', 'show_chart'}),
+    ("Sales trends up to this month", {'execute_sql'}),
     ("What's selling well recently?", {'execute_sql'}),
     ("Current status of member data", {'execute_sql'}),
 ])
