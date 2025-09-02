@@ -8,7 +8,7 @@ import json
 import os
 from pathlib import Path
 import shutil
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from google.cloud import bigquery
 import ibis
@@ -47,18 +47,45 @@ def copy_sql_csv_to_output(output_dir: str) -> None:
 
 
 def download_table_data(client: bigquery.Client, output_dir: str,
-                        table_name: str) -> None:
+                        table_name: str, sample_ids: Dict[str,
+                                                          List[int]]) -> None:
     """
-    Downloads table data from BigQuery and saves it as a CSV file.
+    Downloads table data from BigQuery and saves it as a CSV file,
+    filtering by related IDs to ensure a consistent sample.
 
     Args:
         client (bigquery.Client): The authenticated BigQuery client instance.
         output_dir (str): The directory path to save the CSV file.
         table_name (str): The name of the table to download.
+        sample_ids (Dict[str, List[int]]): A dictionary of lists of IDs to filter by.
     """
     print(f"Downloading table data: {table_name}")
 
     query: str = f"SELECT * FROM `dtt-gcp.test_kaneko_us.{table_name}`"
+    filter_clause = ""
+
+    # 各テーブルの関連IDに応じてフィルタリング
+    if table_name == "users" and "user_ids" in sample_ids:
+        ids_str = ', '.join(map(str, sample_ids["user_ids"]))
+        filter_clause = f" WHERE id IN ({ids_str})"
+    elif table_name in ["orders", "events"] and "user_ids" in sample_ids:
+        ids_str = ', '.join(map(str, sample_ids["user_ids"]))
+        filter_clause = f" WHERE user_id IN ({ids_str})"
+    elif table_name == "order_items" and "order_ids" in sample_ids:
+        ids_str = ', '.join(map(str, sample_ids["order_ids"]))
+        filter_clause = f" WHERE order_id IN ({ids_str})"
+    elif table_name == "products" and "product_ids" in sample_ids:
+        ids_str = ', '.join(map(str, sample_ids["product_ids"]))
+        filter_clause = f" WHERE id IN ({ids_str})"
+    elif table_name == "inventory_items" and "product_ids" in sample_ids:
+        ids_str = ', '.join(map(str, sample_ids["product_ids"]))
+        filter_clause = f" WHERE product_id IN ({ids_str})"
+    elif table_name == "distribution_centers" and "distribution_center_ids" in sample_ids:
+        ids_str = ', '.join(map(str, sample_ids["distribution_center_ids"]))
+        filter_clause = f" WHERE id IN ({ids_str})"
+
+    query += filter_clause
+
     query_job: bigquery.QueryJob = client.query(query)
 
     try:
@@ -139,8 +166,13 @@ def generate_table_info_jsonl(metadata_dir: str, data_dir: str) -> None:
         con: Backend = ibis.duckdb.connect()
         tables_list: List[execute_sql.Table] = []
 
-        dir_path = os.path.dirname(os.path.abspath(__file__))
-        sqls_table = con.read_csv(os.path.join(dir_path, 'sql.csv'))
+        sql_csv_path = os.path.join(metadata_dir, 'sql.csv')
+        if not os.path.exists(sql_csv_path):
+            print(
+                f"❌ Error: '{sql_csv_path}' not found. Cannot generate JSONL.")
+            return
+
+        sqls_table = con.read_csv(sql_csv_path)
 
         csv_files = Path(data_dir).glob('*.csv')
 
@@ -229,6 +261,12 @@ def main() -> None:
         type=str,
         required=True,
         help="Required: The output directory to save the files.")
+    parser.add_argument(
+        "--limit-users",
+        type=int,
+        help=
+        "The number of user IDs to sample. By default, it's unlimited and downloads all data."
+    )
 
     args = parser.parse_args()
 
@@ -237,12 +275,61 @@ def main() -> None:
     metadata_dir: str = args.output_dir
     data_dir: str = os.path.join(metadata_dir, "data")
 
+    sample_ids = {}
+
+    try:
+        # Step 1: ユーザーIDをサンプリング
+        if args.limit_users:
+            query_users = f"SELECT id FROM `dtt-gcp.test_kaneko_us.users` ORDER BY RAND() LIMIT {args.limit_users}"
+            query_job_users = client.query(query_users)
+            sample_ids["user_ids"] = [
+                row['id'] for row in query_job_users.result()
+            ]
+            print(f"Sampled user IDs: {sample_ids['user_ids']}")
+
+            # Step 2: ユーザーIDに基づいて注文IDをサンプリング
+            if sample_ids["user_ids"]:
+                users_str = ', '.join(map(str, sample_ids["user_ids"]))
+                query_orders = f"SELECT order_id FROM `dtt-gcp.test_kaneko_us.orders` WHERE user_id IN ({users_str})"
+                query_job_orders = client.query(query_orders)
+                sample_ids["order_ids"] = [
+                    row['order_id'] for row in query_job_orders.result()
+                ]
+                print(f"Sampled order IDs: {sample_ids['order_ids']}")
+
+            # Step 3: 注文IDに基づいて商品IDをサンプリング
+            if sample_ids.get("order_ids"):
+                orders_str = ', '.join(map(str, sample_ids["order_ids"]))
+                query_products = f"SELECT product_id FROM `dtt-gcp.test_kaneko_us.order_items` WHERE order_id IN ({orders_str})"
+                query_job_products = client.query(query_products)
+                sample_ids["product_ids"] = [
+                    row['product_id'] for row in query_job_products.result()
+                ]
+                print(f"Sampled product IDs: {sample_ids['product_ids']}")
+
+            # Step 4: 商品IDに基づいて流通センターIDをサンプリング
+            if sample_ids.get("product_ids"):
+                products_str = ', '.join(map(str, sample_ids["product_ids"]))
+                query_centers = f"SELECT product_distribution_center_id FROM `dtt-gcp.test_kaneko_us.inventory_items` WHERE product_id IN ({products_str})"
+                query_job_centers = client.query(query_centers)
+                sample_ids["distribution_center_ids"] = [
+                    row['product_distribution_center_id']
+                    for row in query_job_centers.result()
+                ]
+                print(
+                    f"Sampled distribution center IDs: {sample_ids['distribution_center_ids']}"
+                )
+
+    except Exception as e:
+        print(f"❌ Error: Failed to sample IDs. Details: {e}")
+        return
+
     copy_sql_csv_to_output(metadata_dir)
 
     if args.mode == "data" or args.mode == "all":
         os.makedirs(data_dir, exist_ok=True)
         for table_name in TABLES:
-            download_table_data(client, data_dir, table_name)
+            download_table_data(client, data_dir, table_name, sample_ids)
 
     if args.mode == "metadata" or args.mode == "all":
         os.makedirs(metadata_dir, exist_ok=True)

@@ -1,0 +1,106 @@
+{
+    "full_table_id": "dtt-gcp:test_kaneko_us.users",
+    "description": "The `users` table contains information about individual customers. It serves as a dimension table that provides detailed demographic and geographic context for user behavior, rather than transactional data. Each entry represents a unique user and includes personal details, location, and the source of their traffic.\n\nThis data is primarily used for the following purposes:\n\n* **Customer Segmentation**: It allows for the analysis of customer behavior by demographics like age, gender, and location, which is key for targeted marketing campaigns.\n* **Geographic Analysis**: By including location data such as city, state, and postal code, this table helps in understanding customer distribution and regional purchasing trends.\n* **Traffic Source Analysis**: The `traffic_source` field is crucial for evaluating the effectiveness of different marketing channels in acquiring new users.\n* **User Profile Enrichment**: It serves as a central hub for linking other transactional tables (like `orders` and `events`) to specific user profiles, providing a holistic view of the customer journey.",
+    "num_rows": 100000,
+    "num_bytes": 19820922,
+    "created": "2025-08-25 04:43:59.259000+00:00",
+    "modified": "2025-08-29 16:12:50.445000+00:00",
+    "schema": [
+        {
+            "name": "id",
+            "type": "INTEGER",
+            "mode": "NULLABLE",
+            "description": "The unique identifier for the user."
+        },
+        {
+            "name": "first_name",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The user's first name."
+        },
+        {
+            "name": "last_name",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The user's last name."
+        },
+        {
+            "name": "email",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The user's email address."
+        },
+        {
+            "name": "age",
+            "type": "INTEGER",
+            "mode": "NULLABLE",
+            "description": "The user's age."
+        },
+        {
+            "name": "gender",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The user's gender."
+        },
+        {
+            "name": "state",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The user's state."
+        },
+        {
+            "name": "street_address",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The user's street address."
+        },
+        {
+            "name": "postal_code",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The user's postal code."
+        },
+        {
+            "name": "city",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The user's city."
+        },
+        {
+            "name": "country",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The user's country."
+        },
+        {
+            "name": "latitude",
+            "type": "FLOAT",
+            "mode": "NULLABLE",
+            "description": "The latitude coordinate of the user's location."
+        },
+        {
+            "name": "longitude",
+            "type": "FLOAT",
+            "mode": "NULLABLE",
+            "description": "The longitude coordinate of the user's location."
+        },
+        {
+            "name": "traffic_source",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The source from which the user's traffic originated."
+        },
+        {
+            "name": "created_at",
+            "type": "TIMESTAMP",
+            "mode": "NULLABLE",
+            "description": "The timestamp when the user's record was created."
+        },
+        {
+            "name": "user_geom",
+            "type": "GEOMETRY",
+            "mode": "NULLABLE",
+            "description": "The user's geographic location represented as a geography object."
+        }
+    ]
+}

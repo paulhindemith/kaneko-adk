@@ -1,0 +1,76 @@
+{
+    "full_table_id": "dtt-gcp:test_kaneko_us.order_items",
+    "description": "The `order_items` table contains detailed information about individual items within a customer's order. It acts as the central fact table, linking to products, users, and the main order record. Each entry represents a single line item, capturing its unique ID, the associated order, user, and product, as well as its status and price.\n\nThis data is primarily used for the following purposes:\n\n* **Sales and Revenue Analysis**: It allows for the calculation of total sales, average order value, and revenue from specific products or categories.\n* **Order and Fulfillment Tracking**: The table provides granular status updates for each item in an order (e.g., 'Shipped', 'Delivered'), which is crucial for monitoring fulfillment and identifying bottlenecks.\n* **Customer Behavior Analysis**: By joining with the `users` table, this data can reveal purchasing patterns, such as which users are buying which items and when.\n* **Profitability Analysis**: It can be used to analyze the performance of individual products by looking at their sale price and comparing it to cost data from other tables.",
+    "num_rows": 181573,
+    "num_bytes": 13622952,
+    "created": "2025-08-25 04:44:17.076000+00:00",
+    "modified": "2025-08-26 12:46:49.129000+00:00",
+    "schema": [
+        {
+            "name": "id",
+            "type": "INTEGER",
+            "mode": "NULLABLE",
+            "description": "Unique identifier for each individual item within an order. This is the primary key."
+        },
+        {
+            "name": "order_id",
+            "type": "INTEGER",
+            "mode": "NULLABLE",
+            "description": "The ID of the order to which the item belongs. This is a foreign key to `orders.order_id`."
+        },
+        {
+            "name": "user_id",
+            "type": "INTEGER",
+            "mode": "NULLABLE",
+            "description": "The ID of the user who purchased the item. This is a foreign key to `users.id`."
+        },
+        {
+            "name": "product_id",
+            "type": "INTEGER",
+            "mode": "NULLABLE",
+            "description": "The ID of the product being purchased. This is a foreign key to `products.id`."
+        },
+        {
+            "name": "inventory_item_id",
+            "type": "INTEGER",
+            "mode": "NULLABLE",
+            "description": "The ID of the specific inventory item being sold. This is a foreign key to `inventory_items.id`."
+        },
+        {
+            "name": "status",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The status of the order item, such as 'Processing', 'Shipped', or 'Complete'."
+        },
+        {
+            "name": "created_at",
+            "type": "TIMESTAMP",
+            "mode": "NULLABLE",
+            "description": "The timestamp when the order item record was created."
+        },
+        {
+            "name": "shipped_at",
+            "type": "TIMESTAMP",
+            "mode": "NULLABLE",
+            "description": "The timestamp when the order item was shipped. Null if not yet shipped."
+        },
+        {
+            "name": "delivered_at",
+            "type": "TIMESTAMP",
+            "mode": "NULLABLE",
+            "description": "The timestamp when the order item was delivered. Null if not yet delivered."
+        },
+        {
+            "name": "returned_at",
+            "type": "TIMESTAMP",
+            "mode": "NULLABLE",
+            "description": "The timestamp when the order item was returned. Null if not returned."
+        },
+        {
+            "name": "sale_price",
+            "type": "FLOAT",
+            "mode": "NULLABLE",
+            "description": "The final sale price of the item."
+        }
+    ]
+}

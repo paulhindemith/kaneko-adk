@@ -1,0 +1,88 @@
+{
+    "full_table_id": "dtt-gcp:test_kaneko_us.events",
+    "description": "The `events` table stores information about user activities and interactions on a website or application. Each record in this table represents a specific event, such as a page view or a click, and includes details like the user who performed the action, the session it belongs to, and the timestamp.\n\nThis data is primarily used for the following purposes:\n\n* **User Behavior Analysis**: It helps in understanding how users navigate the site, what content they interact with, and the typical paths they take.\n* **Traffic and Conversion Tracking**: The table allows for the analysis of traffic sources, helping to identify which channels are most effective at driving user engagement and conversions.\n* **Customer Journey Mapping**: By tracking the sequence of events, this data can be used to map out a customer's journey from their first interaction to a final purchase or other conversion.\n* **Personalization**: The event data can be used to personalize user experiences by recommending content or products based on past behavior.",
+    "num_rows": 2415400,
+    "num_bytes": 383575458,
+    "created": "2025-08-26 08:47:20.880000+00:00",
+    "modified": "2025-08-26 12:46:05.948000+00:00",
+    "schema": [
+        {
+            "name": "id",
+            "type": "INTEGER",
+            "mode": "NULLABLE",
+            "description": "Unique identifier for each event. This is the primary key."
+        },
+        {
+            "name": "user_id",
+            "type": "INTEGER",
+            "mode": "NULLABLE",
+            "description": "The ID of the user associated with the event. This is a foreign key to `users.id`."
+        },
+        {
+            "name": "sequence_number",
+            "type": "INTEGER",
+            "mode": "NULLABLE",
+            "description": "The sequence number of the event within a user's session."
+        },
+        {
+            "name": "session_id",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "A unique identifier for a user session, often in UUID format."
+        },
+        {
+            "name": "created_at",
+            "type": "TIMESTAMP",
+            "mode": "NULLABLE",
+            "description": "The timestamp when the event was created."
+        },
+        {
+            "name": "ip_address",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The IP address from which the event originated."
+        },
+        {
+            "name": "city",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The city where the event occurred."
+        },
+        {
+            "name": "state",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The state or region where the event occurred."
+        },
+        {
+            "name": "postal_code",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The postal code associated with the event location."
+        },
+        {
+            "name": "browser",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The browser used for the event (e.g., 'Chrome', 'Firefox', 'Safari')."
+        },
+        {
+            "name": "traffic_source",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The source of traffic for the event (e.g., 'Facebook', 'Adwords', 'Email', 'YouTube')."
+        },
+        {
+            "name": "uri",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The URI of the page or resource accessed by the user."
+        },
+        {
+            "name": "event_type",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The type of event (e.g., 'department', 'cart', 'home', 'page view')."
+        }
+    ]
+}

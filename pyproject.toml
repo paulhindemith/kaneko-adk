@@ -13,6 +13,8 @@ python = ">=3.12,<3.13"
 google-adk = ">=1.13.0,<2.0.0"
 ibis-framework = {version=">=10.8.0,<11.0.0", extras=["duckdb"]}
 db-dtypes = ">=1.4.3,<2.0.0"
+geopandas = "^1.1.1"
+pydantic = "^2.11.7"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
@@ -24,7 +26,17 @@ jsonpath-ng = "^1.7.0"
 google-cloud-bigquery-storage = "^2.32.0"
 google-cloud-bigquery = "^3.36.0"
 datamodel-code-generator = "^0.33.0"
+pytest = "^8.4.1"
+pytest-asyncio = "^1.1.0"
 
 [tool.isort]
 profile = "google"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+
+
+
+
+
 

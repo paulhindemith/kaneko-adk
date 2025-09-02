@@ -1,0 +1,11 @@
+id,first_name,last_name,email,age,gender,state,street_address,postal_code,city,country,latitude,longitude,traffic_source,created_at,user_geom
+50950,Tonya,Levine,tonyalevine@example.com,16,F,Beijing,007 Joseph Curve Suite 619,100195,Zhangzhou,China,39.94760873,116.242274,Facebook,2025-06-22 15:57:00+00:00,POINT(116.242274 39.94760873)
+89216,Rickey,Jones,rickeyjones@example.com,12,M,Comunidad de Madrid,7539 Scott Trafficway Apt. 558,28521,Rivas-Vaciamadrid,Spain,40.33955166,-3.501049601,Search,2025-08-23 01:57:09.154167+00:00,POINT(-3.501049601 40.33955166)
+47461,Casey,Taylor,caseytaylor@example.net,26,F,Connecticut,3255 Bender Place,6516,West Haven,United States,41.27244203,-72.96486234,Search,2022-02-05 00:15:00+00:00,POINT(-72.96486234 41.27244203)
+2846,Ryan,Collier,ryancollier@example.org,54,M,Fujian,560 Leblanc Valley Apt. 431,363199,Nantong,China,24.45157015,117.7822863,Search,2019-10-23 18:53:00+00:00,POINT(117.7822863 24.45157015)
+72650,Ryan,Wright,ryanwright@example.net,23,M,Heilongjiang,78326 Lopez Manor Apt. 010,150059,Shan Tou,China,45.81751306,126.8228659,Search,2019-11-20 01:38:00+00:00,POINT(126.8228659 45.81751306)
+79068,Nathan,Webster,nathanwebster@example.com,47,M,Jiangxi,3279 Stephanie Plains,330002,Chengdu,China,28.64910602,115.9113198,Search,2021-06-11 12:04:00+00:00,POINT(115.9113198 28.64910602)
+1627,Michael,Vaughn,michaelvaughn@example.net,43,M,New South Wales,6309 Stephanie Alley,2196,Sydney,Australia,-33.93057089,151.0607151,Search,2020-01-04 17:14:00+00:00,POINT(151.0607151 -33.93057089)
+64328,Jasmine,Eaton,jasmineeaton@example.net,29,F,País Vasco,6497 Kimberly Plaza Suite 186,48920,Portugalete,Spain,43.31622398,-3.023043396,Search,2022-11-29 14:55:00+00:00,POINT(-3.023043396 43.31622398)
+32341,Mindy,Evans,mindyevans@example.net,58,F,Shanghai,23865 Williams Wells Apt. 805,200093,Dalian,China,31.292781,121.540803,Search,2019-11-18 17:20:00+00:00,POINT(121.540803 31.292781)
+23291,Terri,Miller,terrimiller@example.net,52,F,Zhejiang,96754 Hernandez Valleys,325401,Tianjin,China,27.59793261,120.6016836,Search,2022-10-28 08:07:00+00:00,POINT(120.6016836 27.59793261)

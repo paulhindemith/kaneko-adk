@@ -1,0 +1,82 @@
+{
+    "full_table_id": "dtt-gcp:test_kaneko_us.inventory_items",
+    "description": "The `inventory_items` table tracks individual items within the inventory, providing a detailed record of each unit of a product. It includes information on the item's lifecycle, from its creation to when it was sold, along with its cost and associated product details.\n\nThis data is primarily used for the following purposes:\n\n* **Inventory Management**: It allows for precise tracking of stock levels, movement of goods, and the status of individual items.\n* **Cost of Goods Sold (COGS) Analysis**: By recording the cost of each item when it was sold, this table is crucial for calculating the cost of goods sold and determining profitability.\n* **Supply Chain and Fulfillment Analysis**: It helps in understanding the time an item spends in inventory, allowing for optimization of stocking and fulfillment processes.\n* **Product-Level Reporting**: The table links back to the `products` and `distribution_centers` tables, enabling a detailed analysis of sales and costs on a per-item basis.",
+    "num_rows": 489691,
+    "num_bytes": 81231198,
+    "created": "2025-08-25 04:44:24.767000+00:00",
+    "modified": "2025-08-26 12:46:29.773000+00:00",
+    "schema": [
+        {
+            "name": "id",
+            "type": "INTEGER",
+            "mode": "NULLABLE",
+            "description": "Unique identifier for each individual inventory item. This is the primary key and can be used to join with the `inventory_item_id` in the `order_items` table."
+        },
+        {
+            "name": "product_id",
+            "type": "INTEGER",
+            "mode": "NULLABLE",
+            "description": "The ID of the product associated with this inventory item. This is a foreign key to `products.id`."
+        },
+        {
+            "name": "created_at",
+            "type": "TIMESTAMP",
+            "mode": "NULLABLE",
+            "description": "The timestamp when the inventory item was created."
+        },
+        {
+            "name": "sold_at",
+            "type": "TIMESTAMP",
+            "mode": "NULLABLE",
+            "description": "The timestamp when the inventory item was sold. Null if the item is still in stock."
+        },
+        {
+            "name": "cost",
+            "type": "FLOAT",
+            "mode": "NULLABLE",
+            "description": "The cost of the inventory item."
+        },
+        {
+            "name": "product_category",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The category of the product this inventory item belongs to."
+        },
+        {
+            "name": "product_name",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The name of the product this inventory item belongs to."
+        },
+        {
+            "name": "product_brand",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The brand of the product this inventory item belongs to."
+        },
+        {
+            "name": "product_retail_price",
+            "type": "FLOAT",
+            "mode": "NULLABLE",
+            "description": "The retail price of the product this inventory item belongs to."
+        },
+        {
+            "name": "product_department",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The department of the product this inventory item belongs to."
+        },
+        {
+            "name": "product_sku",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The Stock Keeping Unit (SKU) of the product this inventory item belongs to."
+        },
+        {
+            "name": "product_distribution_center_id",
+            "type": "INTEGER",
+            "mode": "NULLABLE",
+            "description": "The ID of the distribution center where the inventory item is located. This is a foreign key to `distribution_centers.id`."
+        }
+    ]
+}

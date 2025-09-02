@@ -1,0 +1,64 @@
+{
+    "full_table_id": "dtt-gcp:test_kaneko_us.orders",
+    "description": "The `orders` table serves as the primary record for each customer order. It captures high-level information about the transaction, such as the order status, the user who placed it, and important timestamps related to the order's lifecycle. It does not contain details about individual items within the order.\n\nThis data is primarily used for the following purposes:\n\n* **Order Status and Lifecycle Tracking**: It provides a clear overview of each order's journey from creation (`created_at`) to delivery (`delivered_at`).\n* **High-Level Sales Analysis**: This table can be used to count the total number of orders, analyze the number of items per order (`num_of_item`), or track trends in order volume over time.\n* **Fulfillment and Shipping Analytics**: The timestamps for shipping and delivery allow for analysis of fulfillment efficiency, such as the duration between order placement and shipment.\n* **Customer Behavior at the Order Level**: By joining with the `users` table, this data helps in understanding purchasing behavior and loyalty from a broader transactional perspective.",
+    "num_rows": 125147,
+    "num_bytes": 6763374,
+    "created": "2025-08-25 04:44:11.460000+00:00",
+    "modified": "2025-08-26 12:47:06.019000+00:00",
+    "schema": [
+        {
+            "name": "order_id",
+            "type": "INTEGER",
+            "mode": "NULLABLE",
+            "description": "Unique identifier for each order. This is the primary key and can be used to join with the `order_id` column in the `order_items` table."
+        },
+        {
+            "name": "user_id",
+            "type": "INTEGER",
+            "mode": "NULLABLE",
+            "description": "The ID of the user who placed the order. This is a foreign key to `users.id`."
+        },
+        {
+            "name": "status",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The current status of the order (e.g., 'Cancelled', 'Complete', 'Processing', 'Shipped', 'Returned')."
+        },
+        {
+            "name": "gender",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The gender of the user who placed the order."
+        },
+        {
+            "name": "created_at",
+            "type": "TIMESTAMP",
+            "mode": "NULLABLE",
+            "description": "The timestamp when the order was created."
+        },
+        {
+            "name": "returned_at",
+            "type": "TIMESTAMP",
+            "mode": "NULLABLE",
+            "description": "The timestamp when the order was returned. This column is nullable as not all orders are returned."
+        },
+        {
+            "name": "shipped_at",
+            "type": "TIMESTAMP",
+            "mode": "NULLABLE",
+            "description": "The timestamp when the order was shipped. This column is nullable if the order has not yet shipped."
+        },
+        {
+            "name": "delivered_at",
+            "type": "TIMESTAMP",
+            "mode": "NULLABLE",
+            "description": "The timestamp when the order was delivered. This column is nullable if the order has not yet been delivered."
+        },
+        {
+            "name": "num_of_item",
+            "type": "INTEGER",
+            "mode": "NULLABLE",
+            "description": "The number of items in the order."
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+id,name,latitude,longitude,distribution_center_geom
+3,Houston TX,29.7604,-95.3698,POINT(-95.3698 29.7604)
+5,New Orleans LA,29.95,-90.0667,POINT(-90.0667 29.95)
+2,Chicago IL,41.8369,-87.6847,POINT(-87.6847 41.8369)
+1,Memphis TN,35.1174,-89.9711,POINT(-89.9711 35.1174)
+6,Port Authority of New York/New Jersey NY/NJ,40.634,-73.7834,POINT(-73.7834 40.634)
+8,Mobile AL,30.6944,-88.0431,POINT(-88.0431 30.6944)
+4,Los Angeles CA,34.05,-118.25,POINT(-118.25 34.05)
+7,Philadelphia PA,39.95,-75.1667,POINT(-75.1667 39.95)
+9,Charleston SC,32.7833,-79.9333,POINT(-79.9333 32.7833)

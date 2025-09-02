@@ -9,7 +9,7 @@ By deploying this code to **Cloud Run** and configuring the GPTs settings, you c
 First, run the following command to download the sample data and generate the `tables.jsonl` file.
 
 ```bash
-python scripts/download_data.py --output_dir examples/gpts/local_data_agent/tables --mode all
+python scripts/download_data.py --output_dir test/tables --mode all
 ```
 
 After running this command, a `tables.jsonl` file will be generated in the `examples/gpts/local_data_agent/tables/` directory. You will upload this file later when creating your GPT.

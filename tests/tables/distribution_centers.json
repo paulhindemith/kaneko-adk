@@ -1,0 +1,40 @@
+{
+    "full_table_id": "dtt-gcp:test_kaneko_us.distribution_centers",
+    "description": "The distribution_centers table stores information about the **distribution centers** responsible for product logistics. Each distribution center is defined by a unique ID, name, latitude, longitude, and geographical data.\n\nThis data is primarily used for the following purposes:\n\n* **Logistics Management Optimization**: It helps in planning the most efficient delivery routes and appropriately allocating inventory by using the location information of the distribution centers.\n* **Customer Service**: The table helps in identifying the closest distribution center to a customer's address to provide more accurate delivery time estimates.\n* **Supply Chain Analysis**: The data can be analyzed to determine which distribution centers handle the most products or are critical for streamlining deliveries to specific regions.",
+    "num_rows": 10,
+    "num_bytes": 809,
+    "created": "2025-08-25 04:44:29.511000+00:00",
+    "modified": "2025-08-26 12:45:42.026000+00:00",
+    "schema": [
+        {
+            "name": "id",
+            "type": "INTEGER",
+            "mode": "NULLABLE",
+            "description": "Unique identifier for each distribution center. This is the primary key and can be used to join with `products.distribution_center_id` and `inventory_items.product_distribution_center_id`."
+        },
+        {
+            "name": "name",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "Name of the distribution center, typically formatted as 'City State Abbreviation' (e.g., 'Savannah GA'). Some names may include more complex descriptions like 'Port Authority of New York/New Jersey NY/NJ'."
+        },
+        {
+            "name": "latitude",
+            "type": "FLOAT",
+            "mode": "NULLABLE",
+            "description": "Latitude coordinate of the distribution center's location."
+        },
+        {
+            "name": "longitude",
+            "type": "FLOAT",
+            "mode": "NULLABLE",
+            "description": "Longitude coordinate of the distribution center's location."
+        },
+        {
+            "name": "distribution_center_geom",
+            "type": "GEOMETRY",
+            "mode": "NULLABLE",
+            "description": "Geographical location of the distribution center, stored as a GEOMETRY type in 'POINT(longitude latitude)' format."
+        }
+    ]
+}

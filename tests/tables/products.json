@@ -1,0 +1,64 @@
+{
+    "full_table_id": "dtt-gcp:test_kaneko_us.products",
+    "description": "The `products` table stores general information about each product, serving as a master list. It contains details like the product's name, category, brand, and retail price. This table typically holds one record per unique product, separate from the `inventory_items` table, which tracks individual units of that product.\n\nThis data is primarily used for the following purposes:\n\n* **Product Catalog and Management**: It provides a central source of truth for all products, which is essential for e-commerce sites and inventory systems.\n* **Merchandising and Marketing Analysis**: The table's category, brand, and department fields are used to analyze sales performance by product type and inform marketing strategies.\n* **Pricing and Profitability Analysis**: By storing the retail price and cost, this table is foundational for calculating profit margins and setting prices.\n* **Joining with Transactional Data**: It's a key dimension table that links with transactional data, such as `order_items`, to provide rich context for sales and customer behavior analysis.",
+    "num_rows": 29120,
+    "num_bytes": 4285975,
+    "created": "2025-08-25 04:44:05.776000+00:00",
+    "modified": "2025-08-26 12:47:26.034000+00:00",
+    "schema": [
+        {
+            "name": "id",
+            "type": "INTEGER",
+            "mode": "NULLABLE",
+            "description": "Unique identifier for each product. This is the primary key and can be used to join with the `product_id` column in the `order_items` and `inventory_items` tables."
+        },
+        {
+            "name": "cost",
+            "type": "FLOAT",
+            "mode": "NULLABLE",
+            "description": "The cost of the product."
+        },
+        {
+            "name": "category",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The category of the product (e.g., 'Tops & Tees', 'Intimates', 'Sleep & Lounge')."
+        },
+        {
+            "name": "name",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The full name of the product."
+        },
+        {
+            "name": "brand",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The brand of the product."
+        },
+        {
+            "name": "retail_price",
+            "type": "FLOAT",
+            "mode": "NULLABLE",
+            "description": "The retail price of the product."
+        },
+        {
+            "name": "department",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The department to which the product belongs (e.g., 'Men', 'Women')."
+        },
+        {
+            "name": "sku",
+            "type": "STRING",
+            "mode": "NULLABLE",
+            "description": "The Stock Keeping Unit (SKU) of the product, often represented as a hexadecimal string."
+        },
+        {
+            "name": "distribution_center_id",
+            "type": "INTEGER",
+            "mode": "NULLABLE",
+            "description": "The ID of the distribution center where the product is stored. This is a foreign key to `distribution_centers.id`."
+        }
+    ]
+}

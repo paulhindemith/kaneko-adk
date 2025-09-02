@@ -1,0 +1,179 @@
+id,user_id,sequence_number,session_id,created_at,ip_address,city,state,postal_code,browser,traffic_source,uri,event_type
+937229,72650,1,367c6d4d-8f73-4537-95fb-2849349e7b7f,2023-06-30 09:00:05+00:00,222.207.72.59,Sydney,New South Wales,2196,Firefox,Email,/department/women/category/skirts/brand/alki'i,department
+610986,47461,4,942543cb-08bf-4246-a454-ed68c56961a1,2021-02-28 23:00:39+00:00,53.93.221.158,Dongguan,Hebei,51530,Safari,Organic,/department/men/category/suits&sportcoats/brand/hillsideusaleatherinc.,department
+298930,23291,2,7892e182-999d-434d-8a4d-776d92a1bfca,2025-03-08 03:12:29+00:00,88.32.183.7,Koblenz,Rheinland-Pfalz,56070,Chrome,Email,/department/men/category/shorts/brand/reef,department
+828284,64328,1,9f032488-d7ba-4bf7-bd81-60f564b447ff,2024-08-09 14:34:41+00:00,74.47.20.175,Bogatynia,Dolnośląskie,59,Chrome,Organic,/department/men/category/sweaters/brand/fredperry,department
+937245,72650,5,b729f4b8-760a-4f9a-a995-8bbabd21edd7,2023-12-06 11:17:10+00:00,98.48.239.48,Sydney,New South Wales,2196,IE,Facebook,/purchase,purchase
+37385,2846,10,049308ea-b0cb-4dd9-b5cd-abcd030f8e4c,2020-09-12 04:32:48+00:00,101.61.244.202,Austintown,Ohio,44515,Safari,YouTube,/purchase,purchase
+610989,47461,7,942543cb-08bf-4246-a454-ed68c56961a1,2021-03-01 23:04:26+00:00,53.93.221.158,Dongguan,Hebei,51530,Safari,Organic,/purchase,purchase
+298933,23291,5,7892e182-999d-434d-8a4d-776d92a1bfca,2025-03-08 03:15:06+00:00,88.32.183.7,Koblenz,Rheinland-Pfalz,56070,Chrome,Email,/purchase,purchase
+656785,50950,6,95c7a885-ab30-41cf-9d78-0df152b4f5b1,2020-02-04 06:54:14+00:00,223.223.80.165,Holyoke,Massachusetts,1040,Firefox,Email,/cart,cart
+610981,47461,6,03527ddb-bd1c-4cbd-88f3-1de782d6caf0,2021-03-01 00:41:05+00:00,76.124.47.176,Dongguan,Hebei,51530,Chrome,Email,/cart,cart
+37402,2846,7,340c8424-c03a-44ff-9a4c-dc6a26dd2e16,2020-09-12 04:29:19+00:00,88.228.108.33,Austintown,Ohio,44515,Firefox,Email,/department/women/category/sweaters/brand/minnierose,department
+37386,2846,1,dc12ef5e-d436-4959-80fa-2ea1675faba3,2020-09-12 03:25:01+00:00,180.239.187.50,Austintown,Ohio,44515,IE,Email,/department/women/category/jeans/brand/womanwithin,department
+1150906,89216,1,52c0e7c3-bf66-45b0-8298-cee36451c310,2024-11-21 02:51:03+00:00,57.199.103.121,Pullman,Washington,99163,Safari,Email,/home,home
+937238,72650,3,9524c786-b77e-430a-93da-9ad74307f0cd,2022-09-19 10:09:38+00:00,162.61.201.2,Sydney,New South Wales,2196,Firefox,Email,/product/10001,product
+37393,2846,8,dc12ef5e-d436-4959-80fa-2ea1675faba3,2020-09-12 03:33:10+00:00,180.239.187.50,Austintown,Ohio,44515,IE,Email,/product/4467,product
+37387,2846,2,dc12ef5e-d436-4959-80fa-2ea1675faba3,2020-09-12 03:25:34+00:00,180.239.187.50,Austintown,Ohio,44515,IE,Email,/product/4467,product
+937240,72650,5,9524c786-b77e-430a-93da-9ad74307f0cd,2022-09-19 10:11:24+00:00,162.61.201.2,Sydney,New South Wales,2196,Firefox,Email,/purchase,purchase
+37405,2846,10,340c8424-c03a-44ff-9a4c-dc6a26dd2e16,2020-09-13 04:34:43+00:00,88.228.108.33,Austintown,Ohio,44515,Firefox,Email,/purchase,purchase
+37384,2846,9,049308ea-b0cb-4dd9-b5cd-abcd030f8e4c,2020-09-12 04:32:05+00:00,101.61.244.202,Austintown,Ohio,44515,Safari,YouTube,/cart,cart
+37391,2846,6,dc12ef5e-d436-4959-80fa-2ea1675faba3,2020-09-12 03:28:16+00:00,180.239.187.50,Austintown,Ohio,44515,IE,Email,/cart,cart
+610988,47461,6,942543cb-08bf-4246-a454-ed68c56961a1,2021-02-28 23:01:43+00:00,53.93.221.158,Dongguan,Hebei,51530,Safari,Organic,/cart,cart
+610985,47461,3,942543cb-08bf-4246-a454-ed68c56961a1,2021-02-28 23:00:13+00:00,53.93.221.158,Dongguan,Hebei,51530,Safari,Organic,/cart,cart
+298968,23291,9,4768ae91-06af-4778-9fa0-4f0ae20fa48e,2025-04-13 04:21:03+00:00,140.250.167.219,Koblenz,Rheinland-Pfalz,56070,Safari,Email,/cart,cart
+298984,23291,12,39cb8375-1806-4098-b44f-84f950e5e140,2025-04-13 03:54:02+00:00,81.59.147.19,Koblenz,Rheinland-Pfalz,56070,IE,Email,/cart,cart
+298942,23291,9,9717a0c3-dab2-4f99-9e67-3b425332c669,2025-04-13 04:46:03+00:00,83.34.208.193,Koblenz,Rheinland-Pfalz,56070,Safari,Facebook,/cart,cart
+416857,32341,4,89ac64f5-5df7-4f03-a2f9-e821e2abcc5c,2025-06-16 08:59:30+00:00,197.249.33.131,Freiburg im Breisgau,Baden-Württemberg,79104,Chrome,Organic,/cart,cart
+937247,72650,2,77ebe65a-273f-445b-8b03-3ceb02d9d7e6,2024-11-08 11:55:26+00:00,161.254.29.30,Sydney,New South Wales,2196,Chrome,Email,/department/women/category/outerwear&coats/brand/laundrybyshellisegal,department
+937242,72650,2,b729f4b8-760a-4f9a-a995-8bbabd21edd7,2023-12-06 11:11:09+00:00,98.48.239.48,Sydney,New South Wales,2196,IE,Facebook,/department/women/category/blazers&jackets/brand/allegrak,department
+298976,23291,4,39cb8375-1806-4098-b44f-84f950e5e140,2025-04-13 03:41:27+00:00,81.59.147.19,Koblenz,Rheinland-Pfalz,56070,IE,Email,/department/men/category/pants/brand/dockers,department
+828287,64328,4,9f032488-d7ba-4bf7-bd81-60f564b447ff,2024-08-09 14:37:25+00:00,74.47.20.175,Bogatynia,Dolnośląskie,59,Chrome,Organic,/department/men/category/sweaters/brand/fredperry,department
+416855,32341,2,89ac64f5-5df7-4f03-a2f9-e821e2abcc5c,2025-06-16 08:56:08+00:00,197.249.33.131,Freiburg im Breisgau,Baden-Württemberg,79104,Chrome,Organic,/department/women/category/blazers&jackets/brand/allegrak,department
+656784,50950,5,95c7a885-ab30-41cf-9d78-0df152b4f5b1,2020-02-04 06:53:13+00:00,223.223.80.165,Holyoke,Massachusetts,1040,Firefox,Email,/product/29003,product
+298944,23291,11,9717a0c3-dab2-4f99-9e67-3b425332c669,2025-04-13 04:50:19+00:00,83.34.208.193,Koblenz,Rheinland-Pfalz,56070,Safari,Facebook,/product/25307,product
+298935,23291,2,9717a0c3-dab2-4f99-9e67-3b425332c669,2025-04-13 04:34:17+00:00,83.34.208.193,Koblenz,Rheinland-Pfalz,56070,Safari,Facebook,/product/25307,product
+298957,23291,11,1e2b2e24-03af-4389-af38-8f5741aca53d,2025-04-13 04:21:45+00:00,92.60.219.147,Koblenz,Rheinland-Pfalz,56070,Chrome,Email,/product/26914,product
+937224,72650,3,b0d6bb32-2591-47cb-91cc-5b9dec6212c1,2023-06-30 09:20:59+00:00,207.132.76.172,Sydney,New South Wales,2196,Chrome,Adwords,/cart,cart
+37378,2846,3,049308ea-b0cb-4dd9-b5cd-abcd030f8e4c,2020-09-12 04:25:10+00:00,101.61.244.202,Austintown,Ohio,44515,Safari,YouTube,/cart,cart
+298981,23291,9,39cb8375-1806-4098-b44f-84f950e5e140,2025-04-13 03:47:32+00:00,81.59.147.19,Koblenz,Rheinland-Pfalz,56070,IE,Email,/cart,cart
+298965,23291,6,4768ae91-06af-4778-9fa0-4f0ae20fa48e,2025-04-13 04:20:03+00:00,140.250.167.219,Koblenz,Rheinland-Pfalz,56070,Safari,Email,/cart,cart
+828293,64328,3,6a82b2a9-d6b9-4bf5-a12c-f5b20f145a2d,2024-08-09 16:55:46+00:00,47.171.229.243,Bogatynia,Dolnośląskie,59,Chrome,Adwords,/cart,cart
+656790,50950,4,24bad2a6-2578-483d-94b6-11a8bff00585,2020-02-04 07:03:06+00:00,138.246.105.175,Holyoke,Massachusetts,1040,Firefox,Adwords,/department/men/category/socks/brand/wigwam,department
+37399,2846,4,340c8424-c03a-44ff-9a4c-dc6a26dd2e16,2020-09-12 04:28:01+00:00,88.228.108.33,Austintown,Ohio,44515,Firefox,Email,/department/women/category/sweaters/brand/minnierose,department
+37379,2846,4,049308ea-b0cb-4dd9-b5cd-abcd030f8e4c,2020-09-12 04:25:57+00:00,101.61.244.202,Austintown,Ohio,44515,Safari,YouTube,/department/women/category/skirts/brand/woodleigh,department
+298943,23291,10,9717a0c3-dab2-4f99-9e67-3b425332c669,2025-04-13 04:48:13+00:00,83.34.208.193,Koblenz,Rheinland-Pfalz,56070,Safari,Facebook,/department/men/category/socks/brand/richerpoorer,department
+1019364,79068,1,f0381e12-056e-488a-aac8-dcb91955c8e7,2021-12-30 03:22:15+00:00,26.32.91.187,Shanghai,Shanghai,200431,Safari,Email,/home,home
+937236,72650,1,9524c786-b77e-430a-93da-9ad74307f0cd,2022-09-19 10:05:15+00:00,162.61.201.2,Sydney,New South Wales,2196,Firefox,Email,/home,home
+37400,2846,5,340c8424-c03a-44ff-9a4c-dc6a26dd2e16,2020-09-12 04:28:44+00:00,88.228.108.33,Austintown,Ohio,44515,Firefox,Email,/product/1341,product
+828288,64328,5,9f032488-d7ba-4bf7-bd81-60f564b447ff,2024-08-09 14:39:24+00:00,74.47.20.175,Bogatynia,Dolnośląskie,59,Chrome,Organic,/product/19328,product
+1150913,89216,3,11dde27f-c6e2-4673-b4c4-59b156cc41d1,2024-08-18 01:13:16+00:00,118.138.172.252,Pullman,Washington,99163,Other,Organic,/product/27472,product
+656782,50950,3,95c7a885-ab30-41cf-9d78-0df152b4f5b1,2020-02-04 06:48:58+00:00,223.223.80.165,Holyoke,Massachusetts,1040,Firefox,Email,/cart,cart
+1019367,79068,4,f0381e12-056e-488a-aac8-dcb91955c8e7,2021-12-30 03:25:55+00:00,26.32.91.187,Shanghai,Shanghai,200431,Safari,Email,/cart,cart
+37404,2846,9,340c8424-c03a-44ff-9a4c-dc6a26dd2e16,2020-09-12 04:32:47+00:00,88.228.108.33,Austintown,Ohio,44515,Firefox,Email,/cart,cart
+298955,23291,9,1e2b2e24-03af-4389-af38-8f5741aca53d,2025-04-13 04:18:49+00:00,92.60.219.147,Koblenz,Rheinland-Pfalz,56070,Chrome,Email,/cart,cart
+298958,23291,12,1e2b2e24-03af-4389-af38-8f5741aca53d,2025-04-13 04:22:12+00:00,92.60.219.147,Koblenz,Rheinland-Pfalz,56070,Chrome,Email,/cart,cart
+656783,50950,4,95c7a885-ab30-41cf-9d78-0df152b4f5b1,2020-02-04 06:51:34+00:00,223.223.80.165,Holyoke,Massachusetts,1040,Firefox,Email,/department/men/category/accessories/brand/thetiebar,department
+298969,23291,10,4768ae91-06af-4778-9fa0-4f0ae20fa48e,2025-04-13 04:21:55+00:00,140.250.167.219,Koblenz,Rheinland-Pfalz,56070,Safari,Email,/department/men/category/sweaters/brand/calvinklein,department
+298956,23291,10,1e2b2e24-03af-4389-af38-8f5741aca53d,2025-04-13 04:18:54+00:00,92.60.219.147,Koblenz,Rheinland-Pfalz,56070,Chrome,Email,/department/men/category/sleep&lounge/brand/majesticinternational,department
+937246,72650,1,77ebe65a-273f-445b-8b03-3ceb02d9d7e6,2024-11-08 11:53:31+00:00,161.254.29.30,Sydney,New South Wales,2196,Chrome,Email,/home,home
+416854,32341,1,89ac64f5-5df7-4f03-a2f9-e821e2abcc5c,2025-06-16 08:53:09+00:00,197.249.33.131,Freiburg im Breisgau,Baden-Württemberg,79104,Chrome,Organic,/home,home
+937233,72650,5,367c6d4d-8f73-4537-95fb-2849349e7b7f,2023-06-30 09:06:30+00:00,222.207.72.59,Sydney,New South Wales,2196,Firefox,Email,/product/7171,product
+298931,23291,3,7892e182-999d-434d-8a4d-776d92a1bfca,2025-03-08 03:13:34+00:00,88.32.183.7,Koblenz,Rheinland-Pfalz,56070,Chrome,Email,/product/23544,product
+298970,23291,11,4768ae91-06af-4778-9fa0-4f0ae20fa48e,2025-04-13 04:24:34+00:00,140.250.167.219,Koblenz,Rheinland-Pfalz,56070,Safari,Email,/product/18965,product
+37395,2846,10,dc12ef5e-d436-4959-80fa-2ea1675faba3,2020-09-16 03:34:52+00:00,180.239.187.50,Austintown,Ohio,44515,IE,Email,/purchase,purchase
+1150910,89216,5,52c0e7c3-bf66-45b0-8298-cee36451c310,2024-11-21 02:56:58+00:00,57.199.103.121,Pullman,Washington,99163,Safari,Email,/purchase,purchase
+298945,23291,12,9717a0c3-dab2-4f99-9e67-3b425332c669,2025-04-13 04:52:07+00:00,83.34.208.193,Koblenz,Rheinland-Pfalz,56070,Safari,Facebook,/cart,cart
+298949,23291,3,1e2b2e24-03af-4389-af38-8f5741aca53d,2025-04-13 04:15:37+00:00,92.60.219.147,Koblenz,Rheinland-Pfalz,56070,Chrome,Email,/cart,cart
+37392,2846,7,dc12ef5e-d436-4959-80fa-2ea1675faba3,2020-09-12 03:30:52+00:00,180.239.187.50,Austintown,Ohio,44515,IE,Email,/department/women/category/jeans/brand/womanwithin,department
+298982,23291,10,39cb8375-1806-4098-b44f-84f950e5e140,2025-04-13 03:49:08+00:00,81.59.147.19,Koblenz,Rheinland-Pfalz,56070,IE,Email,/department/men/category/pants/brand/dockers,department
+298940,23291,7,9717a0c3-dab2-4f99-9e67-3b425332c669,2025-04-13 04:41:31+00:00,83.34.208.193,Koblenz,Rheinland-Pfalz,56070,Safari,Facebook,/department/men/category/socks/brand/richerpoorer,department
+656791,50950,5,24bad2a6-2578-483d-94b6-11a8bff00585,2020-02-04 07:05:19+00:00,138.246.105.175,Holyoke,Massachusetts,1040,Firefox,Adwords,/product/25361,product
+656781,50950,2,95c7a885-ab30-41cf-9d78-0df152b4f5b1,2020-02-04 06:48:04+00:00,223.223.80.165,Holyoke,Massachusetts,1040,Firefox,Email,/product/29003,product
+937248,72650,3,77ebe65a-273f-445b-8b03-3ceb02d9d7e6,2024-11-08 11:56:28+00:00,161.254.29.30,Sydney,New South Wales,2196,Chrome,Email,/product/8361,product
+37390,2846,5,dc12ef5e-d436-4959-80fa-2ea1675faba3,2020-09-12 03:28:12+00:00,180.239.187.50,Austintown,Ohio,44515,IE,Email,/product/4467,product
+37383,2846,8,049308ea-b0cb-4dd9-b5cd-abcd030f8e4c,2020-09-12 04:30:52+00:00,101.61.244.202,Austintown,Ohio,44515,Safari,YouTube,/product/7339,product
+610980,47461,5,03527ddb-bd1c-4cbd-88f3-1de782d6caf0,2021-03-01 00:40:55+00:00,76.124.47.176,Dongguan,Hebei,51530,Chrome,Email,/product/28714,product
+610984,47461,2,942543cb-08bf-4246-a454-ed68c56961a1,2021-02-28 22:59:40+00:00,53.93.221.158,Dongguan,Hebei,51530,Safari,Organic,/product/20268,product
+298977,23291,5,39cb8375-1806-4098-b44f-84f950e5e140,2025-04-13 03:42:32+00:00,81.59.147.19,Koblenz,Rheinland-Pfalz,56070,IE,Email,/product/21765,product
+298967,23291,8,4768ae91-06af-4778-9fa0-4f0ae20fa48e,2025-04-13 04:20:35+00:00,140.250.167.219,Koblenz,Rheinland-Pfalz,56070,Safari,Email,/product/18965,product
+828285,64328,2,9f032488-d7ba-4bf7-bd81-60f564b447ff,2024-08-09 14:36:25+00:00,74.47.20.175,Bogatynia,Dolnośląskie,59,Chrome,Organic,/product/19328,product
+298985,23291,13,39cb8375-1806-4098-b44f-84f950e5e140,2025-04-13 03:54:43+00:00,81.59.147.19,Koblenz,Rheinland-Pfalz,56070,IE,Email,/purchase,purchase
+298959,23291,13,1e2b2e24-03af-4389-af38-8f5741aca53d,2025-04-13 04:23:44+00:00,92.60.219.147,Koblenz,Rheinland-Pfalz,56070,Chrome,Email,/purchase,purchase
+828297,64328,7,6a82b2a9-d6b9-4bf5-a12c-f5b20f145a2d,2024-08-09 17:01:29+00:00,47.171.229.243,Bogatynia,Dolnośląskie,59,Chrome,Adwords,/purchase,purchase
+37401,2846,6,340c8424-c03a-44ff-9a4c-dc6a26dd2e16,2020-09-12 04:29:09+00:00,88.228.108.33,Austintown,Ohio,44515,Firefox,Email,/cart,cart
+298978,23291,6,39cb8375-1806-4098-b44f-84f950e5e140,2025-04-13 03:43:10+00:00,81.59.147.19,Koblenz,Rheinland-Pfalz,56070,IE,Email,/cart,cart
+1150914,89216,4,11dde27f-c6e2-4673-b4c4-59b156cc41d1,2024-08-18 01:14:16+00:00,118.138.172.252,Pullman,Washington,99163,Other,Organic,/cart,cart
+656780,50950,1,95c7a885-ab30-41cf-9d78-0df152b4f5b1,2020-02-04 06:46:21+00:00,223.223.80.165,Holyoke,Massachusetts,1040,Firefox,Email,/department/men/category/accessories/brand/thetiebar,department
+37389,2846,4,dc12ef5e-d436-4959-80fa-2ea1675faba3,2020-09-12 03:26:11+00:00,180.239.187.50,Austintown,Ohio,44515,IE,Email,/department/women/category/jeans/brand/womanwithin,department
+298963,23291,4,4768ae91-06af-4778-9fa0-4f0ae20fa48e,2025-04-13 04:18:21+00:00,140.250.167.219,Koblenz,Rheinland-Pfalz,56070,Safari,Email,/department/men/category/sweaters/brand/calvinklein,department
+828294,64328,4,6a82b2a9-d6b9-4bf5-a12c-f5b20f145a2d,2024-08-09 16:56:02+00:00,47.171.229.243,Bogatynia,Dolnośląskie,59,Chrome,Adwords,/department/men/category/outerwear&coats/brand/kennethcole,department
+656788,50950,2,24bad2a6-2578-483d-94b6-11a8bff00585,2020-02-04 06:59:43+00:00,138.246.105.175,Holyoke,Massachusetts,1040,Firefox,Adwords,/product/25361,product
+1019366,79068,3,f0381e12-056e-488a-aac8-dcb91955c8e7,2021-12-30 03:24:43+00:00,26.32.91.187,Shanghai,Shanghai,200431,Safari,Email,/product/3259,product
+937243,72650,3,b729f4b8-760a-4f9a-a995-8bbabd21edd7,2023-12-06 11:12:46+00:00,98.48.239.48,Sydney,New South Wales,2196,IE,Facebook,/product/7784,product
+298974,23291,2,39cb8375-1806-4098-b44f-84f950e5e140,2025-04-13 03:38:55+00:00,81.59.147.19,Koblenz,Rheinland-Pfalz,56070,IE,Email,/product/21765,product
+298983,23291,11,39cb8375-1806-4098-b44f-84f950e5e140,2025-04-13 03:51:53+00:00,81.59.147.19,Koblenz,Rheinland-Pfalz,56070,IE,Email,/product/21765,product
+298938,23291,5,9717a0c3-dab2-4f99-9e67-3b425332c669,2025-04-13 04:40:21+00:00,83.34.208.193,Koblenz,Rheinland-Pfalz,56070,Safari,Facebook,/product/25307,product
+656792,50950,6,24bad2a6-2578-483d-94b6-11a8bff00585,2020-02-04 07:07:26+00:00,138.246.105.175,Holyoke,Massachusetts,1040,Firefox,Adwords,/cart,cart
+937234,72650,6,367c6d4d-8f73-4537-95fb-2849349e7b7f,2023-06-30 09:09:28+00:00,222.207.72.59,Sydney,New South Wales,2196,Firefox,Email,/cart,cart
+937231,72650,3,367c6d4d-8f73-4537-95fb-2849349e7b7f,2023-06-30 09:02:22+00:00,222.207.72.59,Sydney,New South Wales,2196,Firefox,Email,/cart,cart
+37394,2846,9,dc12ef5e-d436-4959-80fa-2ea1675faba3,2020-09-12 03:34:04+00:00,180.239.187.50,Austintown,Ohio,44515,IE,Email,/cart,cart
+37398,2846,3,340c8424-c03a-44ff-9a4c-dc6a26dd2e16,2020-09-12 04:27:29+00:00,88.228.108.33,Austintown,Ohio,44515,Firefox,Email,/cart,cart
+298962,23291,3,4768ae91-06af-4778-9fa0-4f0ae20fa48e,2025-04-13 04:16:34+00:00,140.250.167.219,Koblenz,Rheinland-Pfalz,56070,Safari,Email,/cart,cart
+298952,23291,6,1e2b2e24-03af-4389-af38-8f5741aca53d,2025-04-13 04:18:01+00:00,92.60.219.147,Koblenz,Rheinland-Pfalz,56070,Chrome,Email,/cart,cart
+1150909,89216,4,52c0e7c3-bf66-45b0-8298-cee36451c310,2024-11-21 02:55:48+00:00,57.199.103.121,Pullman,Washington,99163,Safari,Email,/cart,cart
+610979,47461,4,03527ddb-bd1c-4cbd-88f3-1de782d6caf0,2021-03-01 00:38:49+00:00,76.124.47.176,Dongguan,Hebei,51530,Chrome,Email,/department/men/category/accessories/brand/mg,department
+610976,47461,1,03527ddb-bd1c-4cbd-88f3-1de782d6caf0,2021-03-01 00:33:53+00:00,76.124.47.176,Dongguan,Hebei,51530,Chrome,Email,/department/men/category/accessories/brand/mg,department
+298960,23291,1,4768ae91-06af-4778-9fa0-4f0ae20fa48e,2025-04-13 04:14:32+00:00,140.250.167.219,Koblenz,Rheinland-Pfalz,56070,Safari,Email,/department/men/category/sweaters/brand/calvinklein,department
+937241,72650,1,b729f4b8-760a-4f9a-a995-8bbabd21edd7,2023-12-06 11:10:40+00:00,98.48.239.48,Sydney,New South Wales,2196,IE,Facebook,/home,home
+1150911,89216,1,11dde27f-c6e2-4673-b4c4-59b156cc41d1,2024-08-18 01:10:30+00:00,118.138.172.252,Pullman,Washington,99163,Other,Organic,/home,home
+1019368,79068,5,f0381e12-056e-488a-aac8-dcb91955c8e7,2021-12-30 03:27:45+00:00,26.32.91.187,Shanghai,Shanghai,200431,Safari,Email,/purchase,purchase
+416858,32341,5,89ac64f5-5df7-4f03-a2f9-e821e2abcc5c,2025-06-16 09:01:14+00:00,197.249.33.131,Freiburg im Breisgau,Baden-Württemberg,79104,Chrome,Organic,/purchase,purchase
+1150915,89216,5,11dde27f-c6e2-4673-b4c4-59b156cc41d1,2024-08-18 01:16:18+00:00,118.138.172.252,Pullman,Washington,99163,Other,Organic,/purchase,purchase
+298932,23291,4,7892e182-999d-434d-8a4d-776d92a1bfca,2025-03-08 03:14:03+00:00,88.32.183.7,Koblenz,Rheinland-Pfalz,56070,Chrome,Email,/cart,cart
+828289,64328,6,9f032488-d7ba-4bf7-bd81-60f564b447ff,2024-08-09 14:40:50+00:00,74.47.20.175,Bogatynia,Dolnośląskie,59,Chrome,Organic,/cart,cart
+656787,50950,1,24bad2a6-2578-483d-94b6-11a8bff00585,2020-02-04 06:59:37+00:00,138.246.105.175,Holyoke,Massachusetts,1040,Firefox,Adwords,/department/men/category/socks/brand/wigwam,department
+1019365,79068,2,f0381e12-056e-488a-aac8-dcb91955c8e7,2021-12-30 03:24:18+00:00,26.32.91.187,Shanghai,Shanghai,200431,Safari,Email,/department/women/category/dresses/brand/hotfromhollywood,department
+937232,72650,4,367c6d4d-8f73-4537-95fb-2849349e7b7f,2023-06-30 09:05:12+00:00,222.207.72.59,Sydney,New South Wales,2196,Firefox,Email,/department/women/category/skirts/brand/alki'i,department
+610983,47461,1,942543cb-08bf-4246-a454-ed68c56961a1,2021-02-28 22:58:50+00:00,53.93.221.158,Dongguan,Hebei,51530,Safari,Organic,/department/men/category/suits&sportcoats/brand/hillsideusaleatherinc.,department
+37397,2846,2,340c8424-c03a-44ff-9a4c-dc6a26dd2e16,2020-09-12 04:26:53+00:00,88.228.108.33,Austintown,Ohio,44515,Firefox,Email,/product/1341,product
+37380,2846,5,049308ea-b0cb-4dd9-b5cd-abcd030f8e4c,2020-09-12 04:26:08+00:00,101.61.244.202,Austintown,Ohio,44515,Safari,YouTube,/product/7339,product
+298941,23291,8,9717a0c3-dab2-4f99-9e67-3b425332c669,2025-04-13 04:43:35+00:00,83.34.208.193,Koblenz,Rheinland-Pfalz,56070,Safari,Facebook,/product/25307,product
+298948,23291,2,1e2b2e24-03af-4389-af38-8f5741aca53d,2025-04-13 04:14:23+00:00,92.60.219.147,Koblenz,Rheinland-Pfalz,56070,Chrome,Email,/product/26914,product
+298946,23291,13,9717a0c3-dab2-4f99-9e67-3b425332c669,2025-04-15 04:53:19+00:00,83.34.208.193,Koblenz,Rheinland-Pfalz,56070,Safari,Facebook,/purchase,purchase
+937239,72650,4,9524c786-b77e-430a-93da-9ad74307f0cd,2022-09-19 10:11:21+00:00,162.61.201.2,Sydney,New South Wales,2196,Firefox,Email,/cart,cart
+37381,2846,6,049308ea-b0cb-4dd9-b5cd-abcd030f8e4c,2020-09-12 04:26:36+00:00,101.61.244.202,Austintown,Ohio,44515,Safari,YouTube,/cart,cart
+1150907,89216,2,52c0e7c3-bf66-45b0-8298-cee36451c310,2024-11-21 02:52:42+00:00,57.199.103.121,Pullman,Washington,99163,Safari,Email,/department/men/category/jeans/brand/wrangler,department
+937223,72650,2,b0d6bb32-2591-47cb-91cc-5b9dec6212c1,2023-06-30 09:20:30+00:00,207.132.76.172,Sydney,New South Wales,2196,Chrome,Adwords,/product/12602,product
+37377,2846,2,049308ea-b0cb-4dd9-b5cd-abcd030f8e4c,2020-09-12 04:22:41+00:00,101.61.244.202,Austintown,Ohio,44515,Safari,YouTube,/product/7339,product
+610977,47461,2,03527ddb-bd1c-4cbd-88f3-1de782d6caf0,2021-03-01 00:34:15+00:00,76.124.47.176,Dongguan,Hebei,51530,Chrome,Email,/product/28714,product
+298980,23291,8,39cb8375-1806-4098-b44f-84f950e5e140,2025-04-13 03:46:41+00:00,81.59.147.19,Koblenz,Rheinland-Pfalz,56070,IE,Email,/product/21765,product
+828292,64328,2,6a82b2a9-d6b9-4bf5-a12c-f5b20f145a2d,2024-08-09 16:52:51+00:00,47.171.229.243,Bogatynia,Dolnośląskie,59,Chrome,Adwords,/product/24454,product
+937250,72650,5,77ebe65a-273f-445b-8b03-3ceb02d9d7e6,2024-11-08 11:58:25+00:00,161.254.29.30,Sydney,New South Wales,2196,Chrome,Email,/purchase,purchase
+656789,50950,3,24bad2a6-2578-483d-94b6-11a8bff00585,2020-02-04 07:00:49+00:00,138.246.105.175,Holyoke,Massachusetts,1040,Firefox,Adwords,/cart,cart
+937249,72650,4,77ebe65a-273f-445b-8b03-3ceb02d9d7e6,2024-11-08 11:56:44+00:00,161.254.29.30,Sydney,New South Wales,2196,Chrome,Email,/cart,cart
+937227,72650,6,b0d6bb32-2591-47cb-91cc-5b9dec6212c1,2023-06-30 09:26:22+00:00,207.132.76.172,Sydney,New South Wales,2196,Chrome,Adwords,/cart,cart
+298939,23291,6,9717a0c3-dab2-4f99-9e67-3b425332c669,2025-04-13 04:40:51+00:00,83.34.208.193,Koblenz,Rheinland-Pfalz,56070,Safari,Facebook,/cart,cart
+937225,72650,4,b0d6bb32-2591-47cb-91cc-5b9dec6212c1,2023-06-30 09:22:53+00:00,207.132.76.172,Sydney,New South Wales,2196,Chrome,Adwords,/department/women/category/intimates/brand/designsk,department
+937237,72650,2,9524c786-b77e-430a-93da-9ad74307f0cd,2022-09-19 10:07:45+00:00,162.61.201.2,Sydney,New South Wales,2196,Firefox,Email,/department/women/category/sleep&lounge/brand/tommyhilfiger,department
+298953,23291,7,1e2b2e24-03af-4389-af38-8f5741aca53d,2025-04-13 04:18:43+00:00,92.60.219.147,Koblenz,Rheinland-Pfalz,56070,Chrome,Email,/department/men/category/sleep&lounge/brand/majesticinternational,department
+828291,64328,1,6a82b2a9-d6b9-4bf5-a12c-f5b20f145a2d,2024-08-09 16:51:19+00:00,47.171.229.243,Bogatynia,Dolnośląskie,59,Chrome,Adwords,/department/men/category/outerwear&coats/brand/kennethcole,department
+610987,47461,5,942543cb-08bf-4246-a454-ed68c56961a1,2021-02-28 23:00:47+00:00,53.93.221.158,Dongguan,Hebei,51530,Safari,Organic,/product/20268,product
+828295,64328,5,6a82b2a9-d6b9-4bf5-a12c-f5b20f145a2d,2024-08-09 16:58:26+00:00,47.171.229.243,Bogatynia,Dolnośląskie,59,Chrome,Adwords,/product/24454,product
+937235,72650,7,367c6d4d-8f73-4537-95fb-2849349e7b7f,2023-07-03 09:09:53+00:00,222.207.72.59,Sydney,New South Wales,2196,Firefox,Email,/purchase,purchase
+937228,72650,7,b0d6bb32-2591-47cb-91cc-5b9dec6212c1,2023-07-04 09:26:26+00:00,207.132.76.172,Sydney,New South Wales,2196,Chrome,Adwords,/purchase,purchase
+610982,47461,7,03527ddb-bd1c-4cbd-88f3-1de782d6caf0,2021-03-01 00:41:09+00:00,76.124.47.176,Dongguan,Hebei,51530,Chrome,Email,/purchase,purchase
+298972,23291,13,4768ae91-06af-4778-9fa0-4f0ae20fa48e,2025-04-15 04:27:21+00:00,140.250.167.219,Koblenz,Rheinland-Pfalz,56070,Safari,Email,/purchase,purchase
+937244,72650,4,b729f4b8-760a-4f9a-a995-8bbabd21edd7,2023-12-06 11:15:11+00:00,98.48.239.48,Sydney,New South Wales,2196,IE,Facebook,/cart,cart
+37388,2846,3,dc12ef5e-d436-4959-80fa-2ea1675faba3,2020-09-12 03:26:09+00:00,180.239.187.50,Austintown,Ohio,44515,IE,Email,/cart,cart
+610978,47461,3,03527ddb-bd1c-4cbd-88f3-1de782d6caf0,2021-03-01 00:37:01+00:00,76.124.47.176,Dongguan,Hebei,51530,Chrome,Email,/cart,cart
+298975,23291,3,39cb8375-1806-4098-b44f-84f950e5e140,2025-04-13 03:39:28+00:00,81.59.147.19,Koblenz,Rheinland-Pfalz,56070,IE,Email,/cart,cart
+298971,23291,12,4768ae91-06af-4778-9fa0-4f0ae20fa48e,2025-04-13 04:25:47+00:00,140.250.167.219,Koblenz,Rheinland-Pfalz,56070,Safari,Email,/cart,cart
+828296,64328,6,6a82b2a9-d6b9-4bf5-a12c-f5b20f145a2d,2024-08-09 16:58:52+00:00,47.171.229.243,Bogatynia,Dolnośląskie,59,Chrome,Adwords,/cart,cart
+37382,2846,7,049308ea-b0cb-4dd9-b5cd-abcd030f8e4c,2020-09-12 04:28:01+00:00,101.61.244.202,Austintown,Ohio,44515,Safari,YouTube,/department/women/category/skirts/brand/woodleigh,department
+37376,2846,1,049308ea-b0cb-4dd9-b5cd-abcd030f8e4c,2020-09-12 04:20:43+00:00,101.61.244.202,Austintown,Ohio,44515,Safari,YouTube,/department/women/category/skirts/brand/woodleigh,department
+298950,23291,4,1e2b2e24-03af-4389-af38-8f5741aca53d,2025-04-13 04:17:17+00:00,92.60.219.147,Koblenz,Rheinland-Pfalz,56070,Chrome,Email,/department/men/category/sleep&lounge/brand/majesticinternational,department
+298979,23291,7,39cb8375-1806-4098-b44f-84f950e5e140,2025-04-13 03:45:17+00:00,81.59.147.19,Koblenz,Rheinland-Pfalz,56070,IE,Email,/department/men/category/pants/brand/dockers,department
+298934,23291,1,9717a0c3-dab2-4f99-9e67-3b425332c669,2025-04-13 04:31:56+00:00,83.34.208.193,Koblenz,Rheinland-Pfalz,56070,Safari,Facebook,/department/men/category/socks/brand/richerpoorer,department
+298973,23291,1,39cb8375-1806-4098-b44f-84f950e5e140,2025-04-13 03:36:55+00:00,81.59.147.19,Koblenz,Rheinland-Pfalz,56070,IE,Email,/department/men/category/pants/brand/dockers,department
+1150912,89216,2,11dde27f-c6e2-4673-b4c4-59b156cc41d1,2024-08-18 01:12:01+00:00,118.138.172.252,Pullman,Washington,99163,Other,Organic,/department/men/category/swim/brand/quiksilver,department
+298929,23291,1,7892e182-999d-434d-8a4d-776d92a1bfca,2025-03-08 03:10:24+00:00,88.32.183.7,Koblenz,Rheinland-Pfalz,56070,Chrome,Email,/home,home
+37403,2846,8,340c8424-c03a-44ff-9a4c-dc6a26dd2e16,2020-09-12 04:32:13+00:00,88.228.108.33,Austintown,Ohio,44515,Firefox,Email,/product/1341,product
+298964,23291,5,4768ae91-06af-4778-9fa0-4f0ae20fa48e,2025-04-13 04:18:46+00:00,140.250.167.219,Koblenz,Rheinland-Pfalz,56070,Safari,Email,/product/18965,product
+298951,23291,5,1e2b2e24-03af-4389-af38-8f5741aca53d,2025-04-13 04:17:41+00:00,92.60.219.147,Koblenz,Rheinland-Pfalz,56070,Chrome,Email,/product/26914,product
+298961,23291,2,4768ae91-06af-4778-9fa0-4f0ae20fa48e,2025-04-13 04:16:18+00:00,140.250.167.219,Koblenz,Rheinland-Pfalz,56070,Safari,Email,/product/18965,product
+656793,50950,7,24bad2a6-2578-483d-94b6-11a8bff00585,2020-02-06 07:08:58+00:00,138.246.105.175,Holyoke,Massachusetts,1040,Firefox,Adwords,/purchase,purchase
+298936,23291,3,9717a0c3-dab2-4f99-9e67-3b425332c669,2025-04-13 04:35:45+00:00,83.34.208.193,Koblenz,Rheinland-Pfalz,56070,Safari,Facebook,/cart,cart
+828286,64328,3,9f032488-d7ba-4bf7-bd81-60f564b447ff,2024-08-09 14:37:00+00:00,74.47.20.175,Bogatynia,Dolnośląskie,59,Chrome,Organic,/cart,cart
+937222,72650,1,b0d6bb32-2591-47cb-91cc-5b9dec6212c1,2023-06-30 09:19:57+00:00,207.132.76.172,Sydney,New South Wales,2196,Chrome,Adwords,/department/women/category/intimates/brand/designsk,department
+37396,2846,1,340c8424-c03a-44ff-9a4c-dc6a26dd2e16,2020-09-12 04:26:49+00:00,88.228.108.33,Austintown,Ohio,44515,Firefox,Email,/department/women/category/sweaters/brand/minnierose,department
+298947,23291,1,1e2b2e24-03af-4389-af38-8f5741aca53d,2025-04-13 04:13:01+00:00,92.60.219.147,Koblenz,Rheinland-Pfalz,56070,Chrome,Email,/department/men/category/sleep&lounge/brand/majesticinternational,department
+298966,23291,7,4768ae91-06af-4778-9fa0-4f0ae20fa48e,2025-04-13 04:20:27+00:00,140.250.167.219,Koblenz,Rheinland-Pfalz,56070,Safari,Email,/department/men/category/sweaters/brand/calvinklein,department
+298937,23291,4,9717a0c3-dab2-4f99-9e67-3b425332c669,2025-04-13 04:37:25+00:00,83.34.208.193,Koblenz,Rheinland-Pfalz,56070,Safari,Facebook,/department/men/category/socks/brand/richerpoorer,department
+937230,72650,2,367c6d4d-8f73-4537-95fb-2849349e7b7f,2023-06-30 09:02:16+00:00,222.207.72.59,Sydney,New South Wales,2196,Firefox,Email,/product/7171,product
+937226,72650,5,b0d6bb32-2591-47cb-91cc-5b9dec6212c1,2023-06-30 09:24:34+00:00,207.132.76.172,Sydney,New South Wales,2196,Chrome,Adwords,/product/12602,product
+298954,23291,8,1e2b2e24-03af-4389-af38-8f5741aca53d,2025-04-13 04:18:47+00:00,92.60.219.147,Koblenz,Rheinland-Pfalz,56070,Chrome,Email,/product/26914,product
+416856,32341,3,89ac64f5-5df7-4f03-a2f9-e821e2abcc5c,2025-06-16 08:57:08+00:00,197.249.33.131,Freiburg im Breisgau,Baden-Württemberg,79104,Chrome,Organic,/product/7727,product
+1150908,89216,3,52c0e7c3-bf66-45b0-8298-cee36451c310,2024-11-21 02:52:51+00:00,57.199.103.121,Pullman,Washington,99163,Safari,Email,/product/21032,product
+656786,50950,7,95c7a885-ab30-41cf-9d78-0df152b4f5b1,2020-02-04 06:57:12+00:00,223.223.80.165,Holyoke,Massachusetts,1040,Firefox,Email,/purchase,purchase
+828290,64328,7,9f032488-d7ba-4bf7-bd81-60f564b447ff,2024-08-10 14:41:58+00:00,74.47.20.175,Bogatynia,Dolnośląskie,59,Chrome,Organic,/purchase,purchase
