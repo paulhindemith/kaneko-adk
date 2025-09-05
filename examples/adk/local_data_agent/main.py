@@ -2,7 +2,6 @@
 Streamlit Demo for Local Data Agent
 """
 import asyncio
-import copy
 import random
 import time
 from typing import AsyncGenerator, AsyncIterable, Iterable, List
