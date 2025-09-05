@@ -139,7 +139,7 @@ async def show_events(event_stream: AsyncIterable[Event]):
 
     def button(empty, disabled=False):
 
-        with empty.popover(":small[分析ツール]",
+        with empty.popover(":small[Analysis Tool]",
                            disabled=disabled,
                            icon=":material/analytics:"):
             dialog(parts)
