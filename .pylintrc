@@ -3,4 +3,5 @@ disable = broad-exception-caught,
           line-too-long,
           global-statement,
           dangerous-default-value,
-          logging-fstring-interpolation
+          logging-fstring-interpolation,
+          protected-access

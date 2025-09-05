@@ -8,6 +8,7 @@ import time
 from typing import AsyncGenerator, AsyncIterable, Iterable, List
 import uuid
 
+import altair as alt
 from google.adk.events import Event
 from google.adk.runners import InMemoryRunner
 from google.genai import types
@@ -52,6 +53,10 @@ async def run_adk_async(runner: InMemoryRunner, user_id: str, session_id: str,
 def author_to_st_name(author: str) -> str:
     """
     Maps the author name to the Streamlit message sender name.
+    Args:
+        author (str): The author name.
+    Returns:
+        str: The Streamlit message sender name.
     """
 
     if author == "user":
@@ -62,13 +67,32 @@ def author_to_st_name(author: str) -> str:
 def show_chart(call: types.FunctionCall):
     """
     Displays a Vega-Lite chart.
+    Args:
+        call (types.FunctionCall): The function call containing the chart specification.
     """
 
     df = pd.read_csv(call.args["data"]["url"])
     df.replace([float("inf"), float("-inf")], pd.NA, inplace=True)
-    spec = copy.deepcopy(call.args)
+
+    chart = alt.Chart.from_dict(call.args).interactive()
+    if chart.mark._args[0] == "line" or chart.mark._args[0] == "circle":
+        selection = alt.selection_point(fields=[
+            chart.encoding.x.field._args[0], chart.encoding.y.field._args[0]
+        ],
+                                        on='mouseover',
+                                        nearest=True,
+                                        empty=False)
+        points = chart.mark_point(
+            size=150,
+            filled=False,
+            strokeWidth=1,
+        ).encode(opacity=alt.condition(selection, alt.value(1.0), alt.value(
+            0.0))).add_params(selection)
+
+        chart = chart + points
+    spec = chart.to_dict()
     del spec["data"]
-    st.vega_lite_chart(df, spec)
+    st.vega_lite_chart(df, spec, use_container_width=True)
 
 
 def dialog(parts: List[types.Part]):
