@@ -5,11 +5,15 @@
         "editor.formatOnType": false,
         "editor.codeActionsOnSave": {
             "source.organizeImports": "always"
-        }
+        },
     },
     "isort.args": [
         "--profile",
-        "google"
+        "google",
+        "--line-width",
+        "80",
+        "--force_single_line",
+        "false",
     ],
     "python.testing.pytestArgs": [
         ".",

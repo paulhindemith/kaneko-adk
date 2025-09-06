@@ -4,11 +4,11 @@ repos:
     hooks:
       - id: check-added-large-files
       - id: trailing-whitespace
-  # - repo: https://github.com/google/yapf
-  #   rev: v0.43.0
-  #   hooks:
-  #     - id: yapf
-  #       name: yapf (python)
+  - repo: https://github.com/google/yapf
+    rev: v0.43.0
+    hooks:
+      - id: yapf
+        name: yapf (python)
   - repo: https://github.com/pycqa/isort
     rev: 6.0.1
     hooks:
