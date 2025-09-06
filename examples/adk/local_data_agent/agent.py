@@ -12,12 +12,12 @@ from ibis.backends.duckdb import Backend
 import pandas as pd
 
 from kaneko_adk.agents import DataAnalyticsAgent
+from kaneko_adk.agents import Table
 
 DIR_PATH = os.path.dirname(__file__)
-MAX_ROWS = DataAnalyticsAgent.MAX_ROWS
 
 
-def connect() -> Tuple[Backend, list[DataAnalyticsAgent.Table]]:
+def connect() -> Tuple[Backend, list[Table]]:
     """
     Connect to DuckDB and return the connection and table metadata.
     """

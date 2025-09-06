@@ -2,7 +2,7 @@
 Agent classes for interacting with the Kaneko API.
 """
 import datetime
-from typing import ClassVar, List
+from typing import List
 
 from google.adk.agents import LlmAgent
 from google.adk.models.llm_request import LlmRequest
@@ -18,16 +18,14 @@ from kaneko_adk.tools import show_chart
 
 JST = datetime.timezone(datetime.timedelta(hours=9))
 
+Table = execute_sql.Table
+
 
 class DataAnalyticsAgent(LlmAgent):
     """
     Agent for performing data analytics tasks.
     """
-
-    Table: ClassVar[execute_sql.Table] = execute_sql.Table
-    SQL: ClassVar[execute_sql.SQL] = execute_sql.SQL
-    MAX_ROWS: ClassVar[int] = execute_sql.MAX_ROWS
-    Instruction: ClassVar[str] = """
+    Instruction = """
 You are a data analysis agent that answers user questions using the provided context and available tools.
 
 Today's date: {today}

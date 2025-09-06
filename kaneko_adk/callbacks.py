@@ -297,6 +297,7 @@ def build_add_context_after_tool_callback(
         var_context: str = VAR_CONTEXT) -> AfterToolCallback:
     """ツールの実行後にコンテキストを追加するコールバック関数を返す。"""
 
+    # pylint: disable=unused-argument
     def _after_tool_callback(tool: BaseTool, args: Dict[str, Any],
                              tool_context: ToolContext,
                              tool_response: Dict) -> Optional[Dict]:
