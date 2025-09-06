@@ -7,8 +7,7 @@ from typing import Callable
 
 from ibis.backends.duckdb import Backend as DuckdbBackend
 import pandas as pd
-from pydantic import BaseModel
-from pydantic import Field
+from pydantic import BaseModel, Field
 
 MAX_ROWS = 100
 
@@ -21,7 +20,7 @@ class Schema(BaseModel):
     description: str = Field(..., description="Column description")
 
 
-class SQL(BaseModel):
+class Sql(BaseModel):
     """SQL statement information"""
 
     query: str = Field(..., description="SQL query")
@@ -43,7 +42,7 @@ class Table(BaseModel):
     num_bytes: int = Field(..., description="Table size (in bytes)")
     created: str = Field(..., description="Table creation date")
     modified: str = Field(..., description="Table last modified date")
-    sql: list[SQL] = Field(...,
+    sql: list[Sql] = Field(...,
                            description="SQL statements related to the table")
     schemata: list[Schema] = Field(..., description="Table schema information")
     preview: Preview = Field(..., description="Table preview information")

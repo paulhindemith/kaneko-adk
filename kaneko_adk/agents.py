@@ -10,22 +10,18 @@ from google.genai import types
 from ibis.backends.duckdb import Backend
 from pydantic import Field
 
-from kaneko_adk.callbacks import build_add_context_after_tool_callback
-from kaneko_adk.callbacks import build_set_context_before_model_callback
-from kaneko_adk.callbacks import manage_initial_context_cache
-from kaneko_adk.tools import execute_sql
-from kaneko_adk.tools import show_chart
+from kaneko_adk.callbacks import (
+    build_add_context_after_tool_callback,
+    build_set_context_before_model_callback, manage_initial_context_cache,
+)
+from kaneko_adk.tools import execute_sql, show_chart
 
 JST = datetime.timezone(datetime.timedelta(hours=9))
 
 Table = execute_sql.Table
+Sql = execute_sql.Sql
 
-
-class DataAnalyticsAgent(LlmAgent):
-    """
-    Agent for performing data analytics tasks.
-    """
-    Instruction = """
+INSTRUCTION = """\
 You are a data analysis agent that answers user questions using the provided context and available tools.
 
 Today's date: {today}
@@ -48,6 +44,12 @@ Follow the custom user instructions below. These override all other guidelines.
 > {custom_instruction}
 """
 
+
+class DataAnalyticsAgent(LlmAgent):
+    """
+    Agent for performing data analytics tasks.
+    """
+
     initial_contexts: list[types.Part] = Field(default_factory=list)
 
     def __init__(self,
@@ -69,33 +71,28 @@ Follow the custom user instructions below. These override all other guidelines.
 
         tool_execute_sql = execute_sql.build_tool(con)
         tool_show_chart = show_chart.build_tool("gemini")
-        initial_contexts = [
-            types.Part.from_text(text=execute_sql.create_sql_context(
-                tables=tables))
-        ]
+        initial_contexts = [types.Part.from_text(text=execute_sql.create_sql_context(tables=tables))]
         english_date_str = today.strftime("%B %d, %Y")
 
         # Format the date as an English date string (e.g., "August 27, 2025")
-        super().__init__(
-            name=name,
-            model=model,
-            instruction=DataAnalyticsAgent.Instruction.format(
-                custom_instruction=instruction,
-                today=english_date_str,
-            ).strip(),
-            before_model_callback=[
-                build_set_context_before_model_callback(
-                    initial_contexts=initial_contexts,
-                    caching=True,
-                    max_context_tokens=100_000)
-            ],
-            after_tool_callback=build_add_context_after_tool_callback(),
-            tools=[tool_execute_sql, tool_show_chart],
-            generate_content_config=types.GenerateContentConfig(
-                temperature=0.0,
-                seed=42,
-            ),
-            initial_contexts=initial_contexts)
+        super().__init__(name=name,
+                         model=model,
+                         instruction=INSTRUCTION.format(
+                             custom_instruction=instruction,
+                             today=english_date_str,
+                         ).strip(),
+                         before_model_callback=[
+                             build_set_context_before_model_callback(initial_contexts=initial_contexts,
+                                                                     caching=True,
+                                                                     max_context_tokens=100_000)
+                         ],
+                         after_tool_callback=build_add_context_after_tool_callback(),
+                         tools=[tool_execute_sql, tool_show_chart],
+                         generate_content_config=types.GenerateContentConfig(
+                             temperature=0.0,
+                             seed=42,
+                         ),
+                         initial_contexts=initial_contexts)
 
     async def ready(self):
         """

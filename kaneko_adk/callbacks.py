@@ -2,29 +2,30 @@
 Google ADK のコールバック
 """
 import asyncio
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
 import hashlib
+import logging
 import os
 import random
 from typing import Any, cast, Dict, List, Optional
 
 from google import genai
 from google.adk.agents.callback_context import CallbackContext
-from google.adk.agents.llm_agent import AfterToolCallback
-from google.adk.agents.llm_agent import LlmAgent
-from google.adk.models import Gemini
-from google.adk.models import LlmRequest
-from google.adk.models import LlmResponse
-from google.adk.tools import BaseTool
-from google.adk.tools import ToolContext
+from google.adk.agents.llm_agent import AfterToolCallback, LlmAgent
+from google.adk.models import Gemini, LlmRequest, LlmResponse
+from google.adk.models.lite_llm import LiteLlm
+from google.adk.tools import BaseTool, ToolContext
 from google.genai import types
+from litellm import token_counter
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 VAR_CONTEXT = "context"
 CACHE_LOCATIONS = os.environ.get(
     "CACHE_LOCATIONS",
-    "us-east5,us-south1,us-central1,us-west4,us-east1,us-east4,us-west1"
-).split(",")
+    "us-east5,us-south1,us-central1,us-west4,us-east1,us-east4,us-west1").split(
+        ",")
 CACHE_STORE: Dict[str, Dict] = {}
 
 
@@ -42,12 +43,13 @@ def set_location(callback_context: CallbackContext, location: str):
     """
     invocation_context = callback_context._invocation_context  # pylint: disable=protected-access
 
-    model: Gemini = cast(LlmAgent, invocation_context.agent).canonical_model
-    # @cached_property されているのでキャッシュ無効化
-    if "api_client" in model:
-        del model.api_client
-    os.environ["GOOGLE_CLOUD_LOCATION"] = location
-    model.api_client  # pylint: disable=pointless-statement
+    model = cast(LlmAgent, invocation_context.agent).canonical_model
+    if isinstance(model, Gemini):
+        # @cached_property されているのでキャッシュ無効化
+        if "api_client" in model:
+            del model.api_client
+        os.environ["GOOGLE_CLOUD_LOCATION"] = location
+        model.api_client  # pylint: disable=pointless-statement
 
 
 def _generate_cache_id(parts: List[types.Part]) -> str:
@@ -67,9 +69,12 @@ def _create_partial_context(parts: List[types.Part]) -> types.Content:
     return types.Content(role="user", parts=context_parts)
 
 
-async def _create_cache(cache_id: str, context: types.Content, model: str,
+async def _create_cache(cache_id: str,
+                        context: types.Content,
+                        model: str,
                         system_instruction: Optional[str],
-                        tools: Optional[List[types.Tool]], ttl: str):
+                        tools: Optional[List[types.Tool]],
+                        ttl: str):
     """新しいキャッシュコンテンツを作成し、ストアに保存する。"""
     location = give_cache_location()
     client = genai.Client(location=location)
@@ -83,8 +88,7 @@ async def _create_cache(cache_id: str, context: types.Content, model: str,
                 tools=tools))
         cache_state = {
             "location": location,
-            "expired_at":
-            datetime.now() + timedelta(seconds=int(ttl[:-1]) - 5),
+            "expired_at": datetime.now() + timedelta(seconds=int(ttl[:-1]) - 5),
             "cache_name": res.name
         }
         CACHE_STORE[cache_id] = cache_state
@@ -106,12 +110,11 @@ async def _update_cache(cache_id: str, cache_state: Dict, ttl: str):
         print(f"Failed to update cache: {e}")
 
 
-async def manage_initial_context_cache(
-        initial_contexts: List[types.Part],
-        model: str,
-        system_instruction: Optional[str] = None,
-        tools: Optional[List[types.Tool]] = None,
-        ttl: str = "300s") -> Optional[Dict]:
+async def manage_initial_context_cache(initial_contexts: List[types.Part],
+                                       model: str,
+                                       system_instruction: Optional[str] = None,
+                                       tools: Optional[List[types.Tool]] = None,
+                                       ttl: str = "300s") -> Optional[Dict]:
     """
     initial_contexts に基づいてキャッシュを作成または更新する。
 
@@ -143,7 +146,9 @@ async def manage_initial_context_cache(
                           ttl=ttl))
     else:
         asyncio.create_task(
-            _update_cache(cache_id=cache_id, cache_state=cache_state, ttl=ttl))
+            _update_cache(cache_id=cache_id,
+                          cache_state=cache_state,
+                          ttl=ttl))
 
     return CACHE_STORE.get(cache_id)
 
@@ -203,20 +208,38 @@ def build_set_context_before_model_callback(
             callback_context: CallbackContext,
             llm_request: LlmRequest) -> Optional[LlmResponse]:
         context_parts = callback_context.state.get(var_context, [])
-        model = llm_request.model
+        canonical_model = cast(
+            LlmAgent,
+            callback_context._invocation_context.agent).canonical_model
 
         if max_context_tokens > 0:
             tasks = []
-            client = genai.Client()
 
-            async def set_token(part: dict, model_name=model):
-                res = await client.aio.models.count_tokens(
-                    model=model_name,
-                    contents=[
-                        types.Content(role="user",
-                                      parts=[types.Part.model_validate(part)])
-                    ])
-                part["token"] = res.total_tokens
+            async def set_token(part: dict, canonical_model=canonical_model):
+                contents = [
+                    types.Content(role="user",
+                                  parts=[types.Part.model_validate(part)])
+                ]
+                if isinstance(canonical_model, Gemini):
+                    client = genai.Client()
+                    res = await client.aio.models.count_tokens(
+                        model=canonical_model.model,
+                        contents=contents)
+                    part["token"] = res.total_tokens
+
+                elif isinstance(canonical_model, LiteLlm):
+                    # pylint: disable=import-outside-toplevel
+                    from google.adk.models.lite_llm import (
+                        _get_completion_inputs,
+                    )
+                    messages, _, _, _ = (_get_completion_inputs(
+                        LlmRequest(contents=contents)))
+                    part["token"] = token_counter(model=canonical_model.model,
+                                                  messages=messages)
+                else:
+                    raise NotImplementedError(
+                        f"Token counting not implemented for model type: {type(canonical_model)}"
+                    )
 
             for p in _initial_contexts + context_parts:
                 if "token" not in p:
@@ -240,52 +263,61 @@ def build_set_context_before_model_callback(
         context = _create_context(full_context_parts)
 
         if caching and len(full_context_parts) > 0:
-            partial_cache = False
-            partial_cache_state = await manage_initial_context_cache(
-                initial_contexts=_initial_contexts_parts,
-                model=model,
-                system_instruction=llm_request.config.system_instruction,
-                tools=llm_request.config.tools)
-            if partial_cache_state:
-                partial_cache = True
+            if isinstance(canonical_model, Gemini):
+                partial_cache = False
+                partial_cache_state = await manage_initial_context_cache(
+                    initial_contexts=_initial_contexts_parts,
+                    model=canonical_model.model,
+                    system_instruction=llm_request.config.system_instruction,
+                    tools=llm_request.config.tools)
+                if partial_cache_state:
+                    partial_cache = True
 
-            cache_id = _generate_cache_id(context.parts)
-            cache_state = CACHE_STORE.get(cache_id)
+                cache_id = _generate_cache_id(context.parts)
+                cache_state = CACHE_STORE.get(cache_id)
 
-            if cache_state is None or cache_state.get(
-                    "expired_at", datetime.min) < datetime.now():
-                asyncio.create_task(
-                    _create_cache(cache_id=cache_id,
-                                  context=context,
-                                  model=model,
-                                  system_instruction=llm_request.config.
-                                  system_instruction,
-                                  tools=llm_request.config.tools,
-                                  ttl="60s"))
-                if partial_cache and partial_cache_state:
-                    left_context = _create_left_context(dynamic_contexts)
-                    llm_request.contents = [left_context
-                                            ] + llm_request.contents
-                    set_location(callback_context,
-                                 partial_cache_state["location"])
-                    llm_request.config.cached_content = partial_cache_state[
+                if cache_state is None or cache_state.get(
+                        "expired_at",
+                        datetime.min) < datetime.now():
+                    asyncio.create_task(
+                        _create_cache(cache_id=cache_id,
+                                      context=context,
+                                      model=canonical_model.model,
+                                      system_instruction=llm_request.config.
+                                      system_instruction,
+                                      tools=llm_request.config.tools,
+                                      ttl="60s"))
+                    if partial_cache and partial_cache_state:
+                        left_context = _create_left_context(dynamic_contexts)
+                        llm_request.contents = [left_context
+                                                ] + llm_request.contents
+                        set_location(callback_context,
+                                     partial_cache_state["location"])
+                        llm_request.config.cached_content = partial_cache_state[
+                            "cache_name"]
+                        llm_request.config.system_instruction = None
+                        llm_request.config.tools = None
+                        llm_request.config.tool_config = None
+                    else:
+                        llm_request.contents = [context] + llm_request.contents
+                else:
+                    asyncio.create_task(
+                        _update_cache(cache_id,
+                                      cache_state,
+                                      "60s"))
+                    set_location(callback_context, cache_state["location"])
+                    llm_request.config.cached_content = cache_state[
                         "cache_name"]
                     llm_request.config.system_instruction = None
                     llm_request.config.tools = None
                     llm_request.config.tool_config = None
-                else:
-                    llm_request.contents = [context] + llm_request.contents
-            else:
-                asyncio.create_task(_update_cache(cache_id, cache_state,
-                                                  "60s"))
-                set_location(callback_context, cache_state["location"])
-                llm_request.config.cached_content = cache_state["cache_name"]
-                llm_request.config.system_instruction = None
-                llm_request.config.tools = None
-                llm_request.config.tool_config = None
+            elif isinstance(canonical_model, LiteLlm):
+                logger.warning(
+                    "Caching is not supported for LiteLlm models. Proceeding without caching."
+                )
+                llm_request.contents = [context] + llm_request.contents
         else:
-            if len(context.parts
-                   ) > 2:  # context-start と context-end 以外の要素がある場合
+            if len(context.parts) > 2:  # context-start と context-end 以外の要素がある場合
                 llm_request.contents = [context] + llm_request.contents
 
         return None
@@ -298,7 +330,9 @@ def build_add_context_after_tool_callback(
     """ツールの実行後にコンテキストを追加するコールバック関数を返す。"""
 
     # pylint: disable=unused-argument
-    def _after_tool_callback(tool: BaseTool, args: Dict[str, Any],
+    def _after_tool_callback(tool: BaseTool,
+                             args: Dict[str,
+                                        Any],
                              tool_context: ToolContext,
                              tool_response: Dict) -> Optional[Dict]:
         if _context := tool_response.get("_context"):

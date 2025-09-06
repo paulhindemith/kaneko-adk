@@ -7,12 +7,12 @@ import os
 from pathlib import Path
 from typing import Dict, Tuple
 
+from google.adk.models.lite_llm import LiteLlm
 import ibis
 from ibis.backends.duckdb import Backend
 import pandas as pd
 
-from kaneko_adk.agents import DataAnalyticsAgent
-from kaneko_adk.agents import Table
+from kaneko_adk.agents import DataAnalyticsAgent, Sql, Table
 
 DIR_PATH = os.path.dirname(__file__)
 
@@ -30,8 +30,7 @@ def connect() -> Tuple[Backend, list[Table]]:
     csv_files = Path(os.path.join(DIR_PATH, "tables", "data")).glob('*.csv')
     for f in csv_files:
         table_name = f.stem
-        table_name_path = os.path.join(DIR_PATH, "tables",
-                                       f"{table_name}.json")
+        table_name_path = os.path.join(DIR_PATH, "tables", f"{table_name}.json")
         with open(table_name_path, 'r', encoding='utf-8') as file:
             _tbl: Dict = json.load(file)
             del _tbl["full_table_id"]
@@ -46,14 +45,12 @@ def connect() -> Tuple[Backend, list[Table]]:
         for sql_info in sqls[sqls['table'] == table_name].itertuples():
             description = sql_info.description
             query = sql_info.sql
-            sql.append(
-                DataAnalyticsAgent.SQL.model_construct(
-                    query=query, description=description))
+            sql.append(Sql.model_construct(query=query,
+                                           description=description))
         _tbl["sql"] = sql
 
         _tbl["preview"] = {
-            "csv":
-            _con.table(table_name).to_pandas(limit=3).to_csv(index=False)
+            "csv": _con.table(table_name).to_pandas(limit=3).to_csv(index=False)
         }
         _tbl["schemata"] = _tbl.get("schema", [])
         _tbl["name"] = table_name
@@ -63,19 +60,30 @@ def connect() -> Tuple[Backend, list[Table]]:
         _tbl["created"] = _tbl.get("created", "")
         _tbl["modified"] = _tbl.get("modified", "")
 
-        _tbls.append(DataAnalyticsAgent.Table.model_validate(_tbl))
+        _tbls.append(Table.model_validate(_tbl))
     return _con, _tbls
 
 
-con, tables = connect()
+def build_agent(
+        con: Backend,
+        tables: list[Table],
+        instruction: str = "日本語で回答すること。",
+        model: str | LiteLlm = "gemini-2.5-flash") -> DataAnalyticsAgent:
+    """Returns the root_agent instance."""
+    jst = datetime.timezone(datetime.timedelta(hours=9))
 
-JST = datetime.timezone(datetime.timedelta(hours=9))
-root_agent = DataAnalyticsAgent(name="local_data_agent",
-                                model="gemini-2.5-flash",
-                                instruction="日本語で回答すること。",
-                                con=con,
-                                tables=tables,
-                                today=datetime.datetime(2025,
-                                                        8,
-                                                        27,
-                                                        tzinfo=JST))
+    return DataAnalyticsAgent(name="local_data_agent",
+                              model=model,
+                              instruction=instruction,
+                              con=con,
+                              tables=tables,
+                              today=datetime.datetime(2025,
+                                                      8,
+                                                      27,
+                                                      tzinfo=jst))
+
+
+con, tables = connect()
+model = LiteLlm(
+    model="bedrock/converse/apac.anthropic.claude-sonnet-4-20250514-v1:0")
+root_agent = build_agent(con, tables, model=model)

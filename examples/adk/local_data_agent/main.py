@@ -4,20 +4,22 @@ Streamlit Demo for Local Data Agent
 import asyncio
 import random
 import time
-from typing import AsyncGenerator, AsyncIterable, Iterable, List
+from typing import AsyncGenerator, AsyncIterable, Iterable, List, Tuple
 import uuid
 
 import altair as alt
 from google.adk.events import Event
+from google.adk.models.lite_llm import LiteLlm
 from google.adk.runners import InMemoryRunner
 from google.genai import types
+from ibis.backends.duckdb import Backend
+import litellm
 import pandas as pd
 from sqids import Sqids
 import sqlparse
 import streamlit as st
 
-# pylint: disable=import-error
-from agent import root_agent, MAX_ROWS  # isort: skip
+from kaneko_adk.agents import execute_sql
 
 APP_NAME_FOR_ADK = "local_data_agent"
 ADK_SESSION_KEY = "adk_session_id"
@@ -26,16 +28,39 @@ INITIAL_STATE = {}
 
 
 @st.cache_resource
-def initialize_adk():
+def create_connect() -> Tuple[Backend, list[execute_sql.Table]]:
+    """ Cache resource for `connect` method.
+
+    Returns:
+        Tuple[Backend, list[Table]]: The DuckDB connection and list of table metadata
+    """
+    # pylint: disable=import-outside-toplevel, import-error
+    from agent import connect
+
+    return connect()
+
+
+@st.cache_resource
+def initialize_adk() -> InMemoryRunner:
     """
     Initializes the Google ADK Runner and manages the ADK session.
     Uses Streamlit's cache_resource to ensure this runs only once per app load.
     """
+
+    # pylint: disable=import-outside-toplevel, import-error
+    from agent import build_agent
+
+    con, tables = create_connect()
+    root_agent = build_agent(con, tables)
+
     return InMemoryRunner(agent=root_agent, app_name=APP_NAME_FOR_ADK)
 
 
-async def run_adk_async(runner: InMemoryRunner, user_id: str, session_id: str,
-                        user_message_text: str) -> AsyncGenerator[Event, None]:
+async def run_adk_async(runner: InMemoryRunner,
+                        user_id: str,
+                        session_id: str,
+                        user_message_text: str) -> AsyncGenerator[Event,
+                                                                  None]:
     """
     Asynchronously runs a single turn of the ADK agent conversation.
     """
@@ -45,8 +70,11 @@ async def run_adk_async(runner: InMemoryRunner, user_id: str, session_id: str,
     agent_event_generator = runner.run_async(user_id=user_id,
                                              session_id=session_id,
                                              new_message=content)
-    async for event in agent_event_generator:
-        yield event
+    try:
+        async for event in agent_event_generator:
+            yield event
+    except litellm.RateLimitError as e:
+        st.warning(f"Rate limit exceeded: {e}")
 
 
 def author_to_st_name(author: str) -> str:
@@ -76,7 +104,8 @@ def show_chart(call: types.FunctionCall):
     chart = alt.Chart.from_dict(call.args).interactive()
     if chart.mark._args[0] == "line" or chart.mark._args[0] == "circle":
         selection = alt.selection_point(fields=[
-            chart.encoding.x.field._args[0], chart.encoding.y.field._args[0]
+            chart.encoding.x.field._args[0],
+            chart.encoding.y.field._args[0]
         ],
                                         on='mouseover',
                                         nearest=True,
@@ -85,8 +114,9 @@ def show_chart(call: types.FunctionCall):
             size=150,
             filled=False,
             strokeWidth=1,
-        ).encode(opacity=alt.condition(selection, alt.value(1.0), alt.value(
-            0.0))).add_params(selection)
+        ).encode(opacity=alt.condition(selection,
+                                       alt.value(1.0),
+                                       alt.value(0.0))).add_params(selection)
 
         chart = chart + points
     spec = chart.to_dict()
@@ -128,7 +158,7 @@ def dialog(parts: List[types.Part]):
                             response_part.function_response.response["path"])
                         st.dataframe(df)
                         st.caption(
-                            f":material/info: maximum {MAX_ROWS} rows can be retrieved."
+                            f":material/info: maximum {execute_sql.MAX_ROWS} rows can be retrieved."
                         )
 
             elif part.function_call.name == "show_chart":
@@ -206,13 +236,13 @@ async def main():
     """
     Main entry point for the Streamlit app.
     """
-
-    runner = initialize_adk()
-
+    runner: InMemoryRunner = initialize_adk()
     if "user_id" not in st.session_state:
         sqids = Sqids()
         st.session_state["user_id"] = sqids.encode(
-            [time.time_ns(), random.randint(1, 1_000_000)])
+            [time.time_ns(),
+             random.randint(1,
+                            1_000_000)])
     if ADK_SESSION_KEY not in st.session_state:
         st.session_state[ADK_SESSION_KEY] = uuid.uuid4().hex
         await runner.session_service.create_session(
@@ -220,10 +250,36 @@ async def main():
             user_id=st.session_state["user_id"],
             session_id=st.session_state[ADK_SESSION_KEY],
         )
+
     with st.sidebar:
         if st.button("Clear"):
-            del st.session_state[ADK_SESSION_KEY]
+            if ADK_SESSION_KEY in st.session_state:
+                del st.session_state[ADK_SESSION_KEY]
             st.rerun()
+
+        def format_func(option: str) -> str:
+            if option == "gemini-2.5-flash":
+                return option
+            elif option == "bedrock/anthropic.claude-3-haiku-20240307-v1:0":
+                return "claude-3-haiku"
+            elif option == "bedrock/converse/apac.anthropic.claude-sonnet-4-20250514-v1:0":
+                return "claude-sonnet-4"
+            else:
+                raise ValueError(f"Unknown model: {option}")
+
+        model = st.selectbox(
+            "Model",
+            options=[
+                "gemini-2.5-flash",
+                "bedrock/anthropic.claude-3-haiku-20240307-v1:0",
+                "bedrock/converse/apac.anthropic.claude-sonnet-4-20250514-v1:0"
+            ],
+            format_func=format_func,
+            key="model",
+        )
+        runner.agent.model = model if model == "gemini-2.5-flash" else LiteLlm(
+            model=model)
+
     session = await runner.session_service.get_session(
         app_name=APP_NAME_FOR_ADK,
         user_id=st.session_state["user_id"],
@@ -233,7 +289,8 @@ async def main():
         for item in sync_iterable:
             yield item
 
-    await show_events(async_generator(session.events))
+    if session is not None and session.events:
+        await show_events(async_generator(session.events))
 
     if prompt := st.chat_input("Ask for Local Data Agent"):
         event = Event(
