@@ -454,7 +454,7 @@ def build_add_context_after_tool_callback(
             Optional[Dict]: Message and context ID if context added, else None.
         """
         if _context := tool_response.get("_context"):
-            context_id = Sqids().encode(time.time_ns())
+            context_id = Sqids().encode([time.time_ns()])
             _context.update({"_ctx_id": context_id})
             context_parts = tool_context.state.get(var_context, [])
             context_parts.append(

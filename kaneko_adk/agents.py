@@ -4,11 +4,12 @@ Agent classes for interacting with the Kaneko API.
 import datetime
 from typing import List
 
-from google.adk.agents import LlmAgent
+from google.adk.agents import LlmAgent, SequentialAgent
 from google.adk.models.llm_request import LlmRequest
+from google.adk.planners.built_in_planner import BuiltInPlanner
 from google.genai import types
 from ibis.backends.duckdb import Backend
-from pydantic import Field
+from pydantic import BaseModel, Field
 
 from kaneko_adk.callbacks import (
     build_add_context_after_tool_callback,
@@ -22,7 +23,7 @@ JST = datetime.timezone(datetime.timedelta(hours=9))
 Table = execute_sql.Table
 Sql = execute_sql.Sql
 
-INSTRUCTION = """\
+INSTRUCTION_CORE = """\
 You are a data analysis agent that answers user questions using the provided context and available tools.
 
 Today's date: {today}
@@ -45,8 +46,28 @@ Follow the custom user instructions below. These override all other guidelines.
 > {custom_instruction}
 """
 
+INSTRUCTION_SUGGEST_CANDIDATES = """
+You are an agent that suggests three candidate user messages based on the conversation history.
 
-class DataAnalyticsAgent(LlmAgent):
+Follow the custom user instructions below. These override all other guidelines.
+> {custom_instruction}
+"""
+
+
+class CandidateOutput(BaseModel):
+    """
+    Output schema for candidate suggestions.
+    """
+
+    candidates: List[str] = Field(
+        ...,
+        description="List of user message candidates",
+        min_length=1,
+        max_length=3
+    )
+
+
+class DataAnalyticsAgent(SequentialAgent):
     """
     Agent for performing data analytics tasks.
     """
@@ -56,22 +77,25 @@ class DataAnalyticsAgent(LlmAgent):
     def __init__(
         self,
         name: str,
-        model: str,
-        instruction: str,
         con: Backend,
         tables: List[execute_sql.Table],
-        today: datetime.datetime = datetime.datetime.now(JST)
+        today: datetime.datetime = datetime.datetime.now(JST),
+        instruction: str = "",
+        model_core: str = "gemini-2.5-flash",
+        model_suggest: str = "gemini-2.5-flash-lite",
+        suggest_candidates: bool = False,
     ):
         """ Initialize the DataAnalyticsAgent.
         Args:
             name (str): The name of the agent.
-            model (str): The model to use.
-            instruction (str): The instruction for the agent. This will be inserted into the predefined instruction template.
             con (Backend): The database connection.
             tables (List[execute_sql.Table]): The list of tables.
             today (datetime.datetime, optional): The current date. Defaults to now.
+            instruction (str, optional): Custom instructions for the agent. Defaults to "".
+            model_core (str, optional): The model for the core agent. Defaults to "gemini-2.5-flash".
+            model_suggest (str, optional): The model for the candidate suggestion agent. Defaults to "gemini-2.5-flash-lite".
+            suggest_candidates (bool, optional): Whether to include a candidate suggestion agent. Defaults to False.
         """
-
         tool_execute_sql = execute_sql.build_tool(con, add_context=True)
         tool_show_chart = show_chart.build_tool("gemini")
         initial_contexts = [
@@ -81,11 +105,13 @@ class DataAnalyticsAgent(LlmAgent):
         ]
         english_date_str = today.strftime("%B %d, %Y")
 
+        sub_agents = []
+
         # Format the date as an English date string (e.g., "August 27, 2025")
-        super().__init__(
-            name=name,
-            model=model,
-            instruction=INSTRUCTION.format(
+        core = LlmAgent(
+            name=f"{name}_core",
+            model=model_core,
+            instruction=INSTRUCTION_CORE.format(
                 custom_instruction=instruction,
                 today=english_date_str,
             ).strip(),
@@ -102,7 +128,30 @@ class DataAnalyticsAgent(LlmAgent):
                 temperature=0.0,
                 seed=42,
             ),
-            initial_contexts=initial_contexts
+        )
+        sub_agents.append(core)
+
+        if suggest_candidates:
+
+            suggest_candidates = LlmAgent(
+                name=f"{name}_suggest_candidates",
+                model=model_suggest,
+                instruction=INSTRUCTION_SUGGEST_CANDIDATES.format(
+                    custom_instruction=instruction
+                ).strip(),
+                generate_content_config=types.GenerateContentConfig(
+                    temperature=0.0,
+                    seed=42,
+                ),
+                output_schema=CandidateOutput,
+                planner=BuiltInPlanner(
+                    thinking_config=types.ThinkingConfig(thinking_budget=0)
+                )
+            )
+            sub_agents.append(suggest_candidates)
+
+        super().__init__(
+            name=name, sub_agents=sub_agents, initial_contexts=initial_contexts
         )
 
     async def ready(self):
@@ -111,13 +160,14 @@ class DataAnalyticsAgent(LlmAgent):
         """
 
         req = LlmRequest()
-        tools = await self.canonical_tools()
+        core: LlmAgent = self.sub_agents[0]
+        tools = await core.canonical_tools()
         req.append_tools(tools)
 
         await manage_initial_context_cache(
             initial_contexts=self.initial_contexts,
-            model=self.model,
-            system_instruction=self.instruction,
+            model=self.sub_agents[0].model,
+            system_instruction=self.sub_agents[0].instruction,
             tools=req.config.tools,  # pylint: disable=no-member
             ttl="300s"
         )

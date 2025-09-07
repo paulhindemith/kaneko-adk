@@ -19,6 +19,7 @@ import pandas as pd
 import pytest
 
 from kaneko_adk.agents import DataAnalyticsAgent
+from kaneko_adk.tools import execute_sql
 
 TEST_DIR_PATH = os.path.dirname(__file__)
 
@@ -26,13 +27,13 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def connect_for_test() -> Tuple[Backend, List[DataAnalyticsAgent.Table]]:
+def connect_for_test() -> Tuple[Backend, List[execute_sql.Table]]:
     """
     Connect to a test DuckDB and load table metadata.
     Uses data from the 'test/tables' directory.
     """
     _con: Backend = ibis.duckdb.connect()
-    _tbls: List[DataAnalyticsAgent.Table] = []
+    _tbls: List[execute_sql.Table] = []
 
     sql_csv_path = os.path.join(TEST_DIR_PATH, "tables", "sql.csv")
     sqls = pd.read_csv(sql_csv_path)
@@ -41,33 +42,35 @@ def connect_for_test() -> Tuple[Backend, List[DataAnalyticsAgent.Table]]:
                                   "data")).glob('*.csv')
     for f in csv_files:
         table_name = f.stem
-        table_json_path = os.path.join(TEST_DIR_PATH, "tables",
-                                       f"{table_name}.json")
+        table_json_path = os.path.join(
+            TEST_DIR_PATH, "tables", f"{table_name}.json"
+        )
         with open(table_json_path, 'r', encoding='utf-8') as file:
             _tbl: Dict = json.load(file)
 
         data_type = {
-            item['name']: item['type']
-            for item in _tbl.get('schema', [])
+            item['name']: item['type'] for item in _tbl.get('schema', [])
         }
         _con.read_csv(f, table_name=table_name, types=data_type)
 
         sql = []
         for sql_info in sqls[sqls['table'] == table_name].itertuples():
             sql.append(
-                DataAnalyticsAgent.SQL.model_construct(
-                    query=sql_info.sql, description=sql_info.description))
+                execute_sql.Sql.model_construct(
+                    query=sql_info.sql, description=sql_info.description
+                )
+            )
         _tbl["sql"] = sql
 
         _tbl["preview"] = {
-            "csv":
-            _con.table(table_name).to_pandas(limit=3).to_csv(index=False)
+            "csv": _con.table(table_name).to_pandas(limit=3
+                                                   ).to_csv(index=False)
         }
         _tbl["schemata"] = _tbl.get("schema", [])
         _tbl["name"] = table_name
         _tbl["description"] = _tbl.get("description", "")
 
-        _tbls.append(DataAnalyticsAgent.Table.model_validate(_tbl))
+        _tbls.append(execute_sql.Table.model_validate(_tbl))
 
     return _con, _tbls
 
@@ -80,24 +83,29 @@ async def agent() -> DataAnalyticsAgent:
 
     daa = DataAnalyticsAgent(
         name="test",
-        model="gemini-2.5-flash",
         instruction="日本語で回答すること。",
         con=con,
         tables=tables,
         today=datetime.datetime(2025, 8, 27, tzinfo=jst),
+        model_core="gemini-2.5-flash",
+        model_suggest="gemini-2.5-flash-lite",
+        suggest_candidates=False
     )
     await daa.ready()
     return daa
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("prompt, required_tools", [
-    ("Sales trends up to this month", {'execute_sql'}),
-    ("What's selling well recently?", {'execute_sql'}),
-    ("Current status of member data", {'execute_sql'}),
-])
-async def test_data_analytics_agent(agent: DataAnalyticsAgent, prompt: str,
-                                    required_tools: Set[str]):
+@pytest.mark.parametrize(
+    "prompt, required_tools", [
+        ("Sales trends up to this month", {'execute_sql'}),
+        ("What's selling well recently?", {'execute_sql'}),
+        ("Current status of member data", {'execute_sql'}),
+    ]
+)
+async def test_data_analytics_agent(
+    agent: DataAnalyticsAgent, prompt: str, required_tools: Set[str]
+):
     """
     Test various scenarios with flexible rules for tool chaining.
 
@@ -118,15 +126,16 @@ async def test_data_analytics_agent(agent: DataAnalyticsAgent, prompt: str,
     user_id = "test_user"
     session_id = f"test_session_{prompt[:10]}"
 
-    user_message = types.Content(role='user',
-                                 parts=[types.Part.from_text(text=prompt)])
+    user_message = types.Content(
+        role='user', parts=[types.Part.from_text(text=prompt)]
+    )
     runner = InMemoryRunner(agent=agent, app_name=app_name)
-    await runner.session_service.create_session(app_name=app_name,
-                                                user_id=user_id,
-                                                session_id=session_id)
-    event_generator = runner.run_async(user_id=user_id,
-                                       session_id=session_id,
-                                       new_message=user_message)
+    await runner.session_service.create_session(
+        app_name=app_name, user_id=user_id, session_id=session_id
+    )
+    event_generator = runner.run_async(
+        user_id=user_id, session_id=session_id, new_message=user_message
+    )
 
     events = []
     async for e in event_generator:
@@ -144,8 +153,9 @@ async def test_data_analytics_agent(agent: DataAnalyticsAgent, prompt: str,
         for part in event.content.parts:
             attr = getattr(part, part_type, None)
             if attr:
-                if name is None or (hasattr(attr, 'name')
-                                    and attr.name == name):
+                if name is None or (
+                    hasattr(attr, 'name') and attr.name == name
+                ):
                     return attr
         return None
 
@@ -160,7 +170,8 @@ async def test_data_analytics_agent(agent: DataAnalyticsAgent, prompt: str,
     all_function_calls = {
         part.function_call.name
         for event in events
-        for part in event.content.parts if part.function_call
+        for part in event.content.parts
+        if part.function_call
     }
     assert required_tools.issubset(all_function_calls), \
         f"Tool usage mismatch for '{prompt}'. Expected at least {required_tools}, got {all_function_calls}."
