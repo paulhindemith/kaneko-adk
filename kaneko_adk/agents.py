@@ -10,9 +10,11 @@ from google.genai import types
 from ibis.backends.duckdb import Backend
 from pydantic import Field
 
-from kaneko_adk.callbacks import (build_add_context_after_tool_callback,
-                                  build_set_context_before_model_callback,
-                                  manage_initial_context_cache)
+from kaneko_adk.callbacks import (
+    build_add_context_after_tool_callback,
+    build_set_context_before_model_callback,
+    manage_initial_context_cache,
+)
 from kaneko_adk.tools import execute_sql, show_chart
 
 JST = datetime.timezone(datetime.timedelta(hours=9))
@@ -51,13 +53,15 @@ class DataAnalyticsAgent(LlmAgent):
 
     initial_contexts: list[types.Part] = Field(default_factory=list)
 
-    def __init__(self,
-                 name: str,
-                 model: str,
-                 instruction: str,
-                 con: Backend,
-                 tables: List[execute_sql.Table],
-                 today: datetime.datetime = datetime.datetime.now(JST)):
+    def __init__(
+        self,
+        name: str,
+        model: str,
+        instruction: str,
+        con: Backend,
+        tables: List[execute_sql.Table],
+        today: datetime.datetime = datetime.datetime.now(JST)
+    ):
         """ Initialize the DataAnalyticsAgent.
         Args:
             name (str): The name of the agent.
@@ -68,11 +72,12 @@ class DataAnalyticsAgent(LlmAgent):
             today (datetime.datetime, optional): The current date. Defaults to now.
         """
 
-        tool_execute_sql = execute_sql.build_tool(con)
+        tool_execute_sql = execute_sql.build_tool(con, add_context=True)
         tool_show_chart = show_chart.build_tool("gemini")
         initial_contexts = [
-            types.Part.from_text(text=execute_sql.create_sql_context(
-                tables=tables))
+            types.Part.from_text(
+                text=execute_sql.create_sql_context(tables=tables)
+            )
         ]
         english_date_str = today.strftime("%B %d, %Y")
 
@@ -87,8 +92,9 @@ class DataAnalyticsAgent(LlmAgent):
             before_model_callback=[
                 build_set_context_before_model_callback(
                     initial_contexts=initial_contexts,
-                    caching=True,
-                    max_context_tokens=100_000)
+                    caching=False,
+                    max_context_tokens=100_000
+                )
             ],
             after_tool_callback=build_add_context_after_tool_callback(),
             tools=[tool_execute_sql, tool_show_chart],
@@ -96,7 +102,8 @@ class DataAnalyticsAgent(LlmAgent):
                 temperature=0.0,
                 seed=42,
             ),
-            initial_contexts=initial_contexts)
+            initial_contexts=initial_contexts
+        )
 
     async def ready(self):
         """
@@ -112,4 +119,5 @@ class DataAnalyticsAgent(LlmAgent):
             model=self.model,
             system_instruction=self.instruction,
             tools=req.config.tools,  # pylint: disable=no-member
-            ttl="300s")
+            ttl="300s"
+        )

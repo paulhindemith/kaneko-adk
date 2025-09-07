@@ -7,18 +7,22 @@
             "source.organizeImports": "always"
         },
     },
+    "yapf.args": [
+        "--style",
+        "{based_on_style: google, dedent_closing_brackets: true}",
+    ],
     "isort.args": [
         "--profile",
         "google",
         "--line-width",
         "80",
-        "--force_single_line",
+        "--force-single-line-imports",
         "false",
-        "--multi_line_output",
+        "--multi-line",
         "3",
-        "--include_trailing_comma",
+        "--trailing-comma",
         "true",
-        "--use_parentheses",
+        "--use-parentheses",
         "true"
     ],
     "python.testing.pytestArgs": [
