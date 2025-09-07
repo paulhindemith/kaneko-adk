@@ -1,5 +1,5 @@
 """
-Google ADK のコールバック
+Callbacks for Google ADK.
 """
 import asyncio
 from datetime import datetime, timedelta
@@ -33,22 +33,26 @@ CACHE_STORE: Dict[str, Dict] = {}
 
 
 def give_cache_location() -> str:
-    """ランダムにキャッシュロケーションを返す。"""
+    """Return a random cache location.
+
+    Returns:
+        str: A randomly selected cache location.
+    """
     return random.choice(CACHE_LOCATIONS)
 
 
-def set_location(callback_context: CallbackContext, location: str):
-    """Google Cloud のロケーションを設定する。
+def set_location(callback_context: CallbackContext, location: str) -> None:
+    """Set the Google Cloud location.
 
     Args:
-        callback_context (CallbackContext): コールバックコンテキスト。
-        location (str): Google Cloud のロケーション。
+        callback_context (CallbackContext): The callback context.
+        location (str): The Google Cloud location.
     """
     invocation_context = callback_context._invocation_context  # pylint: disable=protected-access
 
     model = cast(LlmAgent, invocation_context.agent).canonical_model
     if isinstance(model, Gemini):
-        # @cached_property されているのでキャッシュ無効化
+        # Invalidate cache due to @cached_property
         if "api_client" in model:
             del model.api_client
         os.environ["GOOGLE_CLOUD_LOCATION"] = location
@@ -56,13 +60,27 @@ def set_location(callback_context: CallbackContext, location: str):
 
 
 def _generate_cache_id(parts: List[types.Part]) -> str:
-    """コンテンツパーツに基づいて一意なキャッシュIDを生成する。"""
+    """Generate a unique cache ID based on content parts.
+
+    Args:
+        parts (List[types.Part]): List of content parts.
+
+    Returns:
+        str: The generated cache ID.
+    """
     s = "_".join(part.model_dump_json() for part in parts)
     return hashlib.sha256(s.encode()).hexdigest()
 
 
 def _create_partial_context(parts: List[types.Part]) -> types.Content:
-    """キャッシュ用の部分的なコンテキストを作成する。"""
+    """Create a partial context for caching.
+
+    Args:
+        parts (List[types.Part]): List of content parts.
+
+    Returns:
+        types.Content: The constructed partial context.
+    """
     context_parts = [
         types.Part.from_text(
             text=
@@ -76,8 +94,17 @@ async def _create_cache(
     cache_id: str, context: types.Content, model: str,
     system_instruction: Optional[str], tools: Optional[List[types.Tool]],
     ttl: str
-):
-    """新しいキャッシュコンテンツを作成し、ストアに保存する。"""
+) -> None:
+    """Create new cached content and save to store.
+
+    Args:
+        cache_id (str): Cache identifier.
+        context (types.Content): Context to cache.
+        model (str): Model name.
+        system_instruction (Optional[str]): System instruction.
+        tools (Optional[List[types.Tool]]): List of tools.
+        ttl (str): Time to live for cache.
+    """
     location = give_cache_location()
     client = genai.Client(location=location)
     try:
@@ -100,8 +127,14 @@ async def _create_cache(
         print(f"Failed to create cache: {e}")
 
 
-async def _update_cache(cache_id: str, cache_state: Dict, ttl: str):
-    """既存のキャッシュコンテンツのTTLを更新する。"""
+async def _update_cache(cache_id: str, cache_state: Dict, ttl: str) -> None:
+    """Update TTL of existing cached content.
+
+    Args:
+        cache_id (str): Cache identifier.
+        cache_state (Dict): Current cache state.
+        ttl (str): Time to live for cache.
+    """
     client = genai.Client(location=cache_state["location"])
     try:
         await client.aio.caches.update(
@@ -124,17 +157,17 @@ async def manage_initial_context_cache(
     ttl: str = "300s"
 ) -> Optional[Dict]:
     """
-    initial_contexts に基づいてキャッシュを作成または更新する。
+    Create or update cache based on initial_contexts.
 
     Args:
-        initial_contexts (List[types.Part]): キャッシュする初期コンテキスト。
-        model (str): 使用するモデル名。
-        system_instruction (Optional[str]): システムインストラクション。
-        tools (Optional[List[types.Tool]]): 使用するツール。
-        ttl (str): キャッシュの有効期間。
+        initial_contexts (List[types.Part]): Initial contexts to cache.
+        model (str): Model name.
+        system_instruction (Optional[str]): System instruction.
+        tools (Optional[List[types.Tool]]): List of tools.
+        ttl (str): Time to live for cache.
 
     Returns:
-        Optional[Dict]: 作成または更新されたキャッシュの状態。
+        Optional[Dict]: The created or updated cache state.
     """
     if not initial_contexts:
         return None
@@ -168,20 +201,23 @@ def build_set_context_before_model_callback(
     var_context: str = VAR_CONTEXT,
     max_context_tokens: int = -1,
     caching: bool = True,
-):
-    """モデルを呼び出す前にコンテキストを追加するコールバック関数を返す。
+) -> Any:
+    """Return a callback function to add context before model invocation.
 
     Args:
-        initial_contexts (Optional[List[types.Part]]): 初期コンテキストのリスト。
-        var_context (str): コンテキストを保存する state のキー。
-        max_context_tokens (int): コンテキストの最大トークン数。
-        caching (bool): キャッシングを有効にするかどうか。
+        initial_contexts (Optional[List[types.Part]]): List of initial contexts.
+        var_context (str): Key for saving context in state.
+        max_context_tokens (int): Maximum number of context tokens.
+        caching (bool): Whether to enable caching.
+
+    Returns:
+        Any: The callback function.
     """
     _initial_contexts_parts = initial_contexts or []
     _initial_contexts = [part.model_dump() for part in _initial_contexts_parts]
 
     class PartDictAddedToken(types.PartDict):
-        """拡張された PartDict にトークン数を追加したクラス。"""
+        """Extended PartDict class with token count."""
         token: int | None
 
     def _trim_context_parts(
@@ -189,6 +225,16 @@ def build_set_context_before_model_callback(
         context_parts: list[PartDictAddedToken],
         max_tokens: int,
     ) -> list[PartDictAddedToken]:
+        """Trim context parts to fit within max_tokens.
+
+        Args:
+            initial_contexts (list[PartDictAddedToken]): Initial context parts.
+            context_parts (list[PartDictAddedToken]): Dynamic context parts.
+            max_tokens (int): Maximum allowed tokens.
+
+        Returns:
+            list[PartDictAddedToken]: Trimmed context parts.
+        """
         total_tokens = sum(part.get("token", 0) for part in initial_contexts)
         if total_tokens > max_tokens:
             raise ValueError(
@@ -206,10 +252,26 @@ def build_set_context_before_model_callback(
         return trimmed
 
     def _create_left_context(parts: List[types.Part] = []) -> types.Content:
+        """Create left context with <context-end> marker.
+
+        Args:
+            parts (List[types.Part], optional): List of parts. Defaults to [].
+
+        Returns:
+            types.Content: The constructed left context.
+        """
         parts = parts + [types.Part.from_text(text="<context-end>")]
         return types.Content(role="user", parts=parts)
 
     def _create_context(parts: List[types.Part]) -> types.Content:
+        """Create full context with start and end markers.
+
+        Args:
+            parts (List[types.Part]): List of context parts.
+
+        Returns:
+            types.Content: The constructed context.
+        """
         context_parts = _create_partial_context(
             parts
         ).parts + _create_left_context().parts
@@ -218,6 +280,15 @@ def build_set_context_before_model_callback(
     async def _before_model_callback(
         callback_context: CallbackContext, llm_request: LlmRequest
     ) -> Optional[LlmResponse]:
+        """Callback to add context before model invocation.
+
+        Args:
+            callback_context (CallbackContext): The callback context.
+            llm_request (LlmRequest): The LLM request.
+
+        Returns:
+            Optional[LlmResponse]: None.
+        """
         context_parts = callback_context.state.get(var_context, [])
         canonical_model = cast(
             LlmAgent, callback_context._invocation_context.agent
@@ -226,7 +297,15 @@ def build_set_context_before_model_callback(
         if max_context_tokens > 0:
             tasks = []
 
-            async def set_token(part: dict, canonical_model=canonical_model):
+            async def set_token(
+                part: dict, canonical_model=canonical_model
+            ) -> None:
+                """Set token count for a part.
+
+                Args:
+                    part (dict): The part to count tokens for.
+                    canonical_model: The canonical model.
+                """
                 contents = [
                     types.Content(
                         role="user", parts=[types.Part.model_validate(part)]
@@ -336,7 +415,9 @@ def build_set_context_before_model_callback(
                 )
                 llm_request.contents = [context] + llm_request.contents
         else:
-            if len(context.parts) > 2:  # context-start と context-end 以外の要素がある場合
+            if len(
+                context.parts
+            ) > 2:  # If there are elements other than context-start and context-end
                 llm_request.contents = [context] + llm_request.contents
 
         return None
@@ -347,13 +428,31 @@ def build_set_context_before_model_callback(
 def build_add_context_after_tool_callback(
     var_context: str = VAR_CONTEXT
 ) -> AfterToolCallback:
-    """ツールの実行後にコンテキストを追加するコールバック関数を返す。"""
+    """Return a callback function to add context after tool execution.
+
+    Args:
+        var_context (str): Key for saving context in state.
+
+    Returns:
+        AfterToolCallback: The callback function.
+    """
 
     # pylint: disable=unused-argument
     def _after_tool_callback(
         tool: BaseTool, args: Dict[str, Any], tool_context: ToolContext,
         tool_response: Dict
     ) -> Optional[Dict]:
+        """Callback to add tool result to context.
+
+        Args:
+            tool (BaseTool): The tool instance.
+            args (Dict[str, Any]): Arguments for the tool.
+            tool_context (ToolContext): The tool context.
+            tool_response (Dict): The tool response.
+
+        Returns:
+            Optional[Dict]: Message and context ID if context added, else None.
+        """
         if _context := tool_response.get("_context"):
             context_id = Sqids().encode(time.time_ns())
             _context.update({"_ctx_id": context_id})
