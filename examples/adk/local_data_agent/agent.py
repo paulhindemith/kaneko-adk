@@ -85,5 +85,5 @@ def build_agent(
     )
 
 
-con, tables = connect()
-root_agent = build_agent(con, tables)
+_con, _tables = connect()
+root_agent = build_agent(con=_con, tables=_tables)
