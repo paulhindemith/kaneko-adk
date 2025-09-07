@@ -14,6 +14,7 @@ from typing import Any, cast, Dict, List, Optional
 from google import genai
 from google.adk.agents.callback_context import CallbackContext
 from google.adk.agents.llm_agent import AfterToolCallback, LlmAgent
+from google.adk.events import Event
 from google.adk.models import Gemini, LlmRequest, LlmResponse
 from google.adk.models.lite_llm import LiteLlm
 from google.adk.tools import BaseTool, ToolContext
@@ -471,3 +472,34 @@ def build_add_context_after_tool_callback(
         return None
 
     return _after_tool_callback
+
+
+def restore_original_part(part: types.Part, event: Event) -> types.Part:
+    """
+    Restores the original function response part if it was replaced by _ctx_id.
+    Args:
+        part (types.Part): The part to check and restore.
+        event (Event): The event containing possible original parts.
+    Returns:
+        types.Part: The restored original part or the input part if not found.
+    """
+
+    _ctx_id = (
+        part.function_response.response.get("_ctx_id")
+        if part.function_response and part.function_response.response else None
+    )
+    if _ctx_id:
+        for value in event.actions.state_delta.values():
+            if isinstance(value, list):
+                for maybe_part in value:
+                    text = maybe_part.get("text")
+                    if text and _ctx_id in text:
+
+                        return types.Part(
+                            function_response=types.FunctionResponse(
+                                id=part.function_response.id,
+                                name=part.function_response.name,
+                                response=json.loads(text)
+                            )
+                        )
+    return part

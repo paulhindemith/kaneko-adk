@@ -81,8 +81,7 @@ class DataAnalyticsAgent(SequentialAgent):
         tables: List[execute_sql.Table],
         today: datetime.datetime = datetime.datetime.now(JST),
         instruction: str = "",
-        model_core: str = "gemini-2.5-flash",
-        model_suggest: str = "gemini-2.5-flash-lite",
+        model: str = "gemini-2.5-flash",
         suggest_candidates: bool = False,
     ):
         """ Initialize the DataAnalyticsAgent.
@@ -92,8 +91,7 @@ class DataAnalyticsAgent(SequentialAgent):
             tables (List[execute_sql.Table]): The list of tables.
             today (datetime.datetime, optional): The current date. Defaults to now.
             instruction (str, optional): Custom instructions for the agent. Defaults to "".
-            model_core (str, optional): The model for the core agent. Defaults to "gemini-2.5-flash".
-            model_suggest (str, optional): The model for the candidate suggestion agent. Defaults to "gemini-2.5-flash-lite".
+            model (str, optional): The model for the agent. Defaults to "gemini-2.5-flash".
             suggest_candidates (bool, optional): Whether to include a candidate suggestion agent. Defaults to False.
         """
         tool_execute_sql = execute_sql.build_tool(con, add_context=True)
@@ -110,7 +108,7 @@ class DataAnalyticsAgent(SequentialAgent):
         # Format the date as an English date string (e.g., "August 27, 2025")
         core = LlmAgent(
             name=f"{name}_core",
-            model=model_core,
+            model=model,
             instruction=INSTRUCTION_CORE.format(
                 custom_instruction=instruction,
                 today=english_date_str,
@@ -135,7 +133,7 @@ class DataAnalyticsAgent(SequentialAgent):
 
             suggest_candidates = LlmAgent(
                 name=f"{name}_suggest_candidates",
-                model=model_suggest,
+                model=model,
                 instruction=INSTRUCTION_SUGGEST_CANDIDATES.format(
                     custom_instruction=instruction
                 ).strip(),

@@ -70,8 +70,7 @@ def build_agent(
     con: Backend,
     tables: list[Table],
     instruction: str = "日本語で回答すること。",
-    model_core: str | LiteLlm = "gemini-2.5-flash",
-    model_suggest: str | LiteLlm = "gemini-2.5-flash-lite",
+    model: str | LiteLlm = "gemini-2.5-flash",
     suggest_candidates: bool = False,
 ) -> DataAnalyticsAgent:
     """Returns the root_agent instance.
@@ -79,8 +78,7 @@ def build_agent(
         con (Backend): The database connection.
         tables (list[Table]): The list of tables.
         instruction (str, optional): The instruction for the agent. Defaults to "日本語で回答すること。".
-        model_core (str | LiteLlm, optional): The model for the core agent. Defaults to "gemini-2.5-flash".
-        model_suggest (str | LiteLlm, optional): The model for the candidate suggestion agent. Defaults to "gemini-2.5-flash-lite".
+        model (str | LiteLlm, optional): The model for the agent. Defaults to "gemini-2.5-flash".
         suggest_candidates (bool, optional): Whether to include a candidate suggestion agent. Defaults to False.
     Returns:
         DataAnalyticsAgent: The root agent instance.
@@ -89,8 +87,7 @@ def build_agent(
 
     return DataAnalyticsAgent(
         name="local_data_agent",
-        model_core=model_core,
-        model_suggest=model_suggest,
+        model=model,
         instruction=instruction,
         con=con,
         tables=tables,

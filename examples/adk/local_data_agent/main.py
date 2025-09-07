@@ -8,6 +8,7 @@ from typing import AsyncGenerator, AsyncIterable, Iterable, List, Tuple
 import uuid
 
 import altair as alt
+from google.adk.agents.run_config import RunConfig, StreamingMode
 from google.adk.events import Event
 from google.adk.models.lite_llm import LiteLlm
 from google.adk.runners import InMemoryRunner
@@ -20,6 +21,7 @@ import sqlparse
 import streamlit as st
 
 from kaneko_adk.agents import execute_sql
+from kaneko_adk.callbacks import restore_original_part
 
 APP_NAME_FOR_ADK = "local_data_agent"
 ADK_SESSION_KEY = "adk_session_id"
@@ -56,20 +58,23 @@ def initialize_adk() -> InMemoryRunner:
     return InMemoryRunner(agent=root_agent, app_name=APP_NAME_FOR_ADK)
 
 
-async def run_adk_async(runner: InMemoryRunner,
-                        user_id: str,
-                        session_id: str,
-                        user_message_text: str) -> AsyncGenerator[Event,
-                                                                  None]:
+async def run_adk_async(
+    runner: InMemoryRunner, user_id: str, session_id: str,
+    user_message_text: str
+) -> AsyncGenerator[Event, None]:
     """
     Asynchronously runs a single turn of the ADK agent conversation.
     """
-    content = types.Content(role='user',
-                            parts=[types.Part(text=user_message_text)])
+    content = types.Content(
+        role='user', parts=[types.Part(text=user_message_text)]
+    )
 
-    agent_event_generator = runner.run_async(user_id=user_id,
-                                             session_id=session_id,
-                                             new_message=content)
+    agent_event_generator = runner.run_async(
+        user_id=user_id,
+        session_id=session_id,
+        new_message=content,
+        run_config=RunConfig(streaming_mode=StreamingMode.SSE)
+    )
     try:
         async for event in agent_event_generator:
             yield event
@@ -103,20 +108,21 @@ def show_chart(call: types.FunctionCall):
 
     chart = alt.Chart.from_dict(call.args).interactive()
     if chart.mark._args[0] == "line" or chart.mark._args[0] == "circle":
-        selection = alt.selection_point(fields=[
-            chart.encoding.x.field._args[0],
-            chart.encoding.y.field._args[0]
-        ],
-                                        on='mouseover',
-                                        nearest=True,
-                                        empty=False)
+        selection = alt.selection_point(
+            fields=[
+                chart.encoding.x.field._args[0], chart.encoding.y.field._args[0]
+            ],
+            on='mouseover',
+            nearest=True,
+            empty=False
+        )
         points = chart.mark_point(
             size=150,
             filled=False,
             strokeWidth=1,
-        ).encode(opacity=alt.condition(selection,
-                                       alt.value(1.0),
-                                       alt.value(0.0))).add_params(selection)
+        ).encode(
+            opacity=alt.condition(selection, alt.value(1.0), alt.value(0.0))
+        ).add_params(selection)
 
         chart = chart + points
     spec = chart.to_dict()
@@ -137,9 +143,9 @@ def dialog(parts: List[types.Part]):
         if call := part.function_call:
             if call.name == "execute_sql":
                 with st.expander(":green-badge[execute_sql]", expanded=True):
-                    formatted_sql = sqlparse.format(call.args["query"],
-                                                    reindent=True,
-                                                    keyword_case='upper')
+                    formatted_sql = sqlparse.format(
+                        call.args["query"], reindent=True, keyword_case='upper'
+                    )
                     st.code(formatted_sql, language="sql", wrap_lines=True)
                     response_part: types.Part = None
                     for p in parts:
@@ -147,15 +153,19 @@ def dialog(parts: List[types.Part]):
                             response_part = p
                             break
                     if response_part is None:
-                        st.warning("No response found.",
-                                   icon=":material/computer_cancel:")
+                        st.warning(
+                            "No response found.",
+                            icon=":material/computer_cancel:"
+                        )
                     elif "error" in response_part.function_response.response:
                         st.warning(
                             "LLM made a mistake during content generation.",
-                            icon=":material/computer_cancel:")
+                            icon=":material/computer_cancel:"
+                        )
                     else:
                         df = pd.read_csv(
-                            response_part.function_response.response["path"])
+                            response_part.function_response.response["path"]
+                        )
                         st.dataframe(df)
                         st.caption(
                             f":material/info: maximum {execute_sql.MAX_ROWS} rows can be retrieved."
@@ -169,12 +179,15 @@ def dialog(parts: List[types.Part]):
                             response_part = p
                             break
                     if response_part is None:
-                        st.warning("No response found.",
-                                   icon=":material/computer_cancel:")
+                        st.warning(
+                            "No response found.",
+                            icon=":material/computer_cancel:"
+                        )
                     elif "error" in response_part.function_response.response:
                         st.warning(
                             "LLM made a mistake during content generation.",
-                            icon=":material/computer_cancel:")
+                            icon=":material/computer_cancel:"
+                        )
                     else:
                         show_chart(part.function_call)
 
@@ -192,15 +205,19 @@ async def show_events(event_stream: AsyncIterable[Event]):
 
     def button(empty, disabled=False):
 
-        with empty.popover(":small[Analysis Tool]",
-                           disabled=disabled,
-                           icon=":material/analytics:"):
+        with empty.popover(
+            ":small[Analysis Tool]",
+            disabled=disabled,
+            icon=":material/analytics:"
+        ):
             dialog(parts)
 
     with st.spinner("Waiting for response..."):
         event: Event = await anext(event_stream, None)
     while event:
         parts: List[types.Part] = []
+        streaming_text = None
+        streaming_empty = None
         current_author = event.author
         if event.content and event.content.parts:
             with st.container(gap=None):
@@ -213,20 +230,33 @@ async def show_events(event_stream: AsyncIterable[Event]):
                                 button(empty, disabled=True)
                                 parts.append(part)
                             if part.function_response:
-                                parts.append(part)
+                                parts.append(restore_original_part(part, event))
                                 if part.function_response.name == "show_chart" and "error" not in part.function_response.response:
                                     for p in parts:
                                         if p.function_call and p.function_call.id == part.function_response.id:
                                             show_chart(p.function_call)
                                             break
                             elif part.text:
-                                st.markdown(part.text)
+                                if event.partial:
+                                    if streaming_empty is None:
+                                        streaming_text = part.text
+                                        streaming_empty = st.empty()
+                                    else:
+                                        streaming_text += part.text
+                                    streaming_empty.markdown(streaming_text)
+                                else:
+                                    if streaming_empty is not None:
+                                        streaming_empty.empty()
+                                        streaming_empty = None
+                                        streaming_text = None
+                                    st.markdown(part.text)
                         with st.spinner("Waiting for response..."):
                             event: Event = await anext(event_stream, None)
                 if len(parts) > 0:
                     button(empty)
-        elif event.actions and (event.actions.state_delta
-                                or event.actions.artifact_delta):
+        elif event.actions and (
+            event.actions.state_delta or event.actions.artifact_delta
+        ):
             print("Type: State/Artifact Update")
         else:
             print(f"Unknown event type: {event}")
@@ -240,9 +270,8 @@ async def main():
     if "user_id" not in st.session_state:
         sqids = Sqids()
         st.session_state["user_id"] = sqids.encode(
-            [time.time_ns(),
-             random.randint(1,
-                            1_000_000)])
+            [time.time_ns(), random.randint(1, 1_000_000)]
+        )
     if ADK_SESSION_KEY not in st.session_state:
         st.session_state[ADK_SESSION_KEY] = uuid.uuid4().hex
         await runner.session_service.create_session(
@@ -250,40 +279,50 @@ async def main():
             user_id=st.session_state["user_id"],
             session_id=st.session_state[ADK_SESSION_KEY],
         )
+    if "model_locked" not in st.session_state:
+        st.session_state["model_locked"] = False
 
     with st.sidebar:
-        if st.button("Clear"):
-            if ADK_SESSION_KEY in st.session_state:
-                del st.session_state[ADK_SESSION_KEY]
-            st.rerun()
+        with st.container(gap="medium"):
+            if st.button(
+                "New Chat",
+                icon=":material/edit_note:",
+            ):
+                if ADK_SESSION_KEY in st.session_state:
+                    del st.session_state[ADK_SESSION_KEY]
+                    del st.session_state["model_locked"]
+                st.rerun()
 
-        def format_func(option: str) -> str:
-            if option == "gemini-2.5-flash":
-                return option
-            elif option == "bedrock/anthropic.claude-3-haiku-20240307-v1:0":
-                return "claude-3-haiku"
-            elif option == "bedrock/converse/apac.anthropic.claude-sonnet-4-20250514-v1:0":
-                return "claude-sonnet-4"
-            else:
-                raise ValueError(f"Unknown model: {option}")
+            def format_func(option: str) -> str:
+                if option == "gemini-2.5-flash":
+                    return option
+                elif option == "bedrock/anthropic.claude-3-haiku-20240307-v1:0":
+                    return "claude-3-haiku"
+                elif option == "bedrock/converse/apac.anthropic.claude-sonnet-4-20250514-v1:0":
+                    return "claude-sonnet-4"
+                else:
+                    raise ValueError(f"Unknown model: {option}")
 
-        model = st.selectbox(
-            "Model",
-            options=[
-                "gemini-2.5-flash",
-                "bedrock/anthropic.claude-3-haiku-20240307-v1:0",
-                "bedrock/converse/apac.anthropic.claude-sonnet-4-20250514-v1:0"
-            ],
-            format_func=format_func,
-            key="model",
-        )
-        runner.agent.model = model if model == "gemini-2.5-flash" else LiteLlm(
-            model=model)
+            model: str = st.selectbox(
+                "Model",
+                options=[
+                    "gemini-2.5-flash",
+                    "bedrock/anthropic.claude-3-haiku-20240307-v1:0",
+                    "bedrock/converse/apac.anthropic.claude-sonnet-4-20250514-v1:0"
+                ],
+                format_func=format_func,
+                key="model",
+                disabled=st.session_state["model_locked"]
+            )
+            runner.agent.sub_agents[0].model = model if model.startswith(
+                "gemini-"
+            ) else LiteLlm(model=model)
 
     session = await runner.session_service.get_session(
         app_name=APP_NAME_FOR_ADK,
         user_id=st.session_state["user_id"],
-        session_id=st.session_state[ADK_SESSION_KEY])
+        session_id=st.session_state[ADK_SESSION_KEY]
+    )
 
     async def async_generator(sync_iterable: Iterable):
         for item in sync_iterable:
@@ -293,10 +332,20 @@ async def main():
         await show_events(async_generator(session.events))
 
     if prompt := st.chat_input("Ask for Local Data Agent"):
+        st.session_state["model_locked"] = True
+        st.session_state["prompt"] = prompt
+
+        # Apply `model_locked` change immediately
+        st.rerun()
+
+    if "prompt" in st.session_state:
+        prompt = st.session_state["prompt"]
+        del st.session_state["prompt"]
         event = Event(
             author='user',
-            content=types.Content(role="user",
-                                  parts=[types.Part.from_text(text=prompt)]),
+            content=types.Content(
+                role="user", parts=[types.Part.from_text(text=prompt)]
+            ),
         )
         await show_events(async_generator([event]))
         with st.spinner("Waiting for response..."):
@@ -304,7 +353,8 @@ async def main():
                 runner=runner,
                 user_id=st.session_state["user_id"],
                 session_id=st.session_state[ADK_SESSION_KEY],
-                user_message_text=prompt)
+                user_message_text=prompt
+            )
         await show_events(response)
 
 
