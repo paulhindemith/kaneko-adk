@@ -9,10 +9,8 @@ package-mode = false
 [tool.poetry.dependencies]
 python = ">=3.12,<3.13"
 streamlit = ">=1.49.1,<2.0.0"
-sqids = ">=0.5.2,<0.6.0"
 fsspec = ">=2025.7.0,<2026.0.0"
 kaneko-adk = { path = "../../../", develop = true }
-geopandas = "^1.1.1"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
