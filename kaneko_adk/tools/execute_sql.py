@@ -42,8 +42,9 @@ class Table(BaseModel):
     num_bytes: int = Field(..., description="Table size (in bytes)")
     created: str = Field(..., description="Table creation date")
     modified: str = Field(..., description="Table last modified date")
-    sql: list[Sql] = Field(...,
-                           description="SQL statements related to the table")
+    sql: list[Sql] = Field(
+        ..., description="SQL statements related to the table"
+    )
     schemata: list[Schema] = Field(..., description="Table schema information")
     preview: Preview = Field(..., description="Table preview information")
 
@@ -94,8 +95,9 @@ def build_tool(con: DuckdbBackend, add_context: bool = False) -> Callable:
             res = df.head(MAX_ROWS).to_csv(index=False)
 
             file_path = ""
-            with tempfile.NamedTemporaryFile(delete=False,
-                                             suffix=".csv") as tmpfile:
+            with tempfile.NamedTemporaryFile(
+                delete=False, suffix=".csv"
+            ) as tmpfile:
                 tmpfile.write(res.encode())
                 file_path = tmpfile.name
 
