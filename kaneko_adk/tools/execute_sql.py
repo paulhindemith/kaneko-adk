@@ -105,6 +105,7 @@ def build_tool(con: DuckdbBackend, add_context: bool = False) -> Callable:
                 "path": file_path,
                 "mime_type": "text/csv",
                 "content": res,
+                "sql": query,
             }
             if add_context:
                 return {"_context": res}

@@ -2,9 +2,10 @@
 Agent classes for interacting with the Kaneko API.
 """
 import datetime
-from typing import List
+from typing import List, Optional
 
 from google.adk.agents import LlmAgent, SequentialAgent
+from google.adk.agents.callback_context import CallbackContext
 from google.adk.models.llm_request import LlmRequest
 from google.adk.planners.built_in_planner import BuiltInPlanner
 from google.genai import types
@@ -14,7 +15,9 @@ from pydantic import BaseModel, Field
 from kaneko_adk.callbacks import (
     build_add_context_after_tool_callback,
     build_set_context_before_model_callback,
+    dict_to_context,
     manage_initial_context_cache,
+    VAR_CONTEXT,
 )
 from kaneko_adk.tools import execute_sql, show_chart
 
@@ -83,6 +86,8 @@ class DataAnalyticsAgent(SequentialAgent):
         instruction: str = "",
         model: str = "gemini-2.5-flash",
         suggest_candidates: bool = False,
+        initial_context_sqls: List[str] = None,
+        dinamic_context_sqls: List[str] = None,
     ):
         """ Initialize the DataAnalyticsAgent.
         Args:
@@ -93,16 +98,29 @@ class DataAnalyticsAgent(SequentialAgent):
             instruction (str, optional): Custom instructions for the agent. Defaults to "".
             model (str, optional): The model for the agent. Defaults to "gemini-2.5-flash".
             suggest_candidates (bool, optional): Whether to include a candidate suggestion agent. Defaults to False.
+            initial_context_sqls (List[str], optional): SQL queries to run for initial context. Defaults to None.
+            dinamic_context_sqls (List[str], optional): SQL queries to run for dynamic context
         """
         tool_execute_sql = execute_sql.build_tool(con, add_context=True)
         tool_show_chart = show_chart.build_tool("gemini")
         initial_contexts = [
             types.Part.from_text(
                 text=execute_sql.create_sql_context(tables=tables)
-            )
+            ),
         ]
-        english_date_str = today.strftime("%B %d, %Y")
+        if initial_context_sqls:
+            for sql in initial_context_sqls:
+                result = tool_execute_sql(sql)
+                part, _ = dict_to_context(result)
+                initial_contexts.append(part)
+        dinamic_contexts = []
+        if dinamic_context_sqls:
+            for sql in dinamic_context_sqls:
+                result = tool_execute_sql(sql)
+                part, _ = dict_to_context(result)
+                dinamic_contexts.append(part)
 
+        english_date_str = today.strftime("%B %d, %Y")
         sub_agents = []
 
         # Format the date as an English date string (e.g., "August 27, 2025")
@@ -116,11 +134,13 @@ class DataAnalyticsAgent(SequentialAgent):
             before_model_callback=[
                 build_set_context_before_model_callback(
                     initial_contexts=initial_contexts,
-                    caching=False,
+                    caching=True,
                     max_context_tokens=100_000
                 )
             ],
-            after_tool_callback=build_add_context_after_tool_callback(),
+            after_tool_callback=build_add_context_after_tool_callback(
+                var_context=VAR_CONTEXT
+            ),
             tools=[tool_execute_sql, tool_show_chart],
             generate_content_config=types.GenerateContentConfig(
                 temperature=0.0,
@@ -148,8 +168,30 @@ class DataAnalyticsAgent(SequentialAgent):
             )
             sub_agents.append(suggest_candidates)
 
+        def set_dinamic_context(
+            callback_context: CallbackContext,
+            var_context=VAR_CONTEXT
+        ) -> Optional[types.Content]:
+            """Set dynamic context before each run (only on the first run).
+
+            Args:
+                callback_context (CallbackContext): The callback context.
+            Returns:
+                Optional[types.Content]: None
+            """
+            context_parts = callback_context.state.get(var_context, [])
+            if context_parts:
+                return None
+            for part in dinamic_contexts:
+                context_parts.append(part.model_dump())
+            callback_context.state[var_context] = context_parts
+            return None
+
         super().__init__(
-            name=name, sub_agents=sub_agents, initial_contexts=initial_contexts
+            name=name,
+            sub_agents=sub_agents,
+            initial_contexts=initial_contexts,
+            before_agent_callback=[set_dinamic_context]
         )
 
     async def ready(self):

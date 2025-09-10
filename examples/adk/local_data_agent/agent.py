@@ -93,6 +93,8 @@ def build_agent(
         tables=tables,
         today=datetime.datetime(2025, 8, 27, tzinfo=jst),
         suggest_candidates=suggest_candidates,
+        initial_context_sqls=[],
+        dinamic_context_sqls=[]
     )
 
 

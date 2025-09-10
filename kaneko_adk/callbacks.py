@@ -9,7 +9,7 @@ import logging
 import os
 import random
 import time
-from typing import Any, cast, Dict, List, Optional
+from typing import Any, cast, Dict, List, Optional, Tuple
 
 from google import genai
 from google.adk.agents.callback_context import CallbackContext
@@ -426,6 +426,22 @@ def build_set_context_before_model_callback(
     return _before_model_callback
 
 
+def dict_to_context(_context: Dict) -> Tuple[types.Part, str]:
+    """Convert a dictionary to a types.Part object.
+
+    Args:
+        _context (Dict): The dictionary to convert.
+
+    Returns:
+        Tuple[types.Part, str]: The types.Part object and a unique context ID.
+    """
+    context_id = Sqids().encode([time.time_ns()])
+    _context.update({"_ctx_id": context_id})
+    return types.Part.from_text(
+        text=json.dumps(_context, ensure_ascii=False)
+    ), context_id
+
+
 def build_add_context_after_tool_callback(
     var_context: str = VAR_CONTEXT
 ) -> AfterToolCallback:
@@ -455,14 +471,9 @@ def build_add_context_after_tool_callback(
             Optional[Dict]: Message and context ID if context added, else None.
         """
         if _context := tool_response.get("_context"):
-            context_id = Sqids().encode([time.time_ns()])
-            _context.update({"_ctx_id": context_id})
             context_parts = tool_context.state.get(var_context, [])
-            context_parts.append(
-                types.Part.from_text(
-                    text=json.dumps(_context, ensure_ascii=False)
-                ).model_dump()
-            )
+            part, context_id = dict_to_context(_context)
+            context_parts.append(part.model_dump())
             tool_context.state[var_context] = context_parts
 
             return {
