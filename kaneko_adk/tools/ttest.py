@@ -55,7 +55,7 @@ def _get_single_column_name(sql_query: str) -> Optional[str]:
         if len(selects) == 1:
             select_expression = selects[0]
             if isinstance(select_expression, sqlglot.exp.Alias):
-                return select_expression.alias.name
+                return select_expression.alias
             elif isinstance(select_expression, sqlglot.exp.Column):
                 return select_expression.name
             else:
@@ -85,13 +85,36 @@ def create_ttest_runner(conn: Backend):
         then performing the final calculation in Python.
 
         Args:
-            sql_query_a (str): The SQL query to extract data for group A. Must return a single column.
-            sql_query_b (str): The SQL query to extract data for group B. Must return a single column.
+            sql_query_a (str): The SQL query to extract data for group A. Must return a single column and should have a column alias (e.g., SELECT 1 AS value).
+            sql_query_b (str): The SQL query to extract data for group B. Must return a single column and should have a column alias (e.g., SELECT 1 AS value).
 
         Returns:
-            dict: A dictionary containing the p-value or an error message.
+            dict: A dictionary containing the results of the t-test or an error message.
+                  - If successful, the dictionary contains:
+                  - "p_value" (float or str): The two-sided p-value of the t-test. If calculation fails, returns "NaN".
+                  - "details" (dict): Detailed statistics and calculation results:
+                      - "group_a" (dict): Summary statistics for group A:
+                          - "n" (int): Number of observations in group A.
+                          - "mean" (float): Mean value of group A.
+                          - "std_dev" (float): Sample standard deviation of group A.
+                      - "group_b" (dict): Summary statistics for group B:
+                          - "n" (int): Number of observations in group B.
+                          - "mean" (float): Mean value of group B.
+                          - "std_dev" (float): Sample standard deviation of group B.
+                      - "t_statistic" (float): The calculated t-statistic for the test.
+                      - "degrees_of_freedom" (float): The degrees of freedom used in the t-test calculation (Welch-Satterthwaite approximation).
+                  - If validation or execution fails, the dictionary contains:
+                  - "error" (str): A descriptive error message indicating the reason for failure, such as invalid query, insufficient data, or zero standard deviation.
+
+            Note:
+            - The function validates that each SQL query returns a single column and at least two observations per group.
+            - If either group has zero standard deviation, the t-test cannot be performed and an error is returned.
+            - The t-test is performed using summary statistics, not raw data, for efficiency.
         """
-        # ユーザーの元の関数を使用してバリデーションチェックを行います
+
+        sql_query_a = sql_query_a.replace(";", "")
+        sql_query_b = sql_query_b.replace(";", "")
+
         if not is_single_column_query(sql_query_a):
             return {
                 "error":
@@ -103,7 +126,6 @@ def create_ttest_runner(conn: Backend):
                     f"Group B query must select a single column: {sql_query_b}"
             }
 
-        # クエリから列名を動的に取得します
         col_name_a = _get_single_column_name(sql_query_a)
         col_name_b = _get_single_column_name(sql_query_b)
 
@@ -188,8 +210,27 @@ def create_ttest_runner(conn: Backend):
         if np.isnan(p_value):
             p_value = "NaN"
         else:
-            p_value = round(float(p_value), 3)
+            p_value = round(float(p_value), 6)
 
-        return {"p_value": p_value}
+        return {
+            "p_value": p_value,
+            "details":
+                {
+                    "group_a":
+                        {
+                            "n": int(n_a),
+                            "mean": float(mean_a),
+                            "std_dev": float(std_dev_a)
+                        },
+                    "group_b":
+                        {
+                            "n": int(n_b),
+                            "mean": float(mean_b),
+                            "std_dev": float(std_dev_b)
+                        },
+                    "t_statistic": float(t_statistic),
+                    "degrees_of_freedom": float(df_value)
+                }
+        }
 
     return ttest_runner
