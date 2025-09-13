@@ -189,6 +189,7 @@ async def manage_initial_context_cache(
                 ttl=ttl
             )
         )
+        return None
     else:
         asyncio.create_task(
             _update_cache(cache_id=cache_id, cache_state=cache_state, ttl=ttl)
